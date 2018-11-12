@@ -12,14 +12,13 @@ void endTimer();
 void trainUserX(bit user);
 void testingPhase();
 int getEuclideanDistance(bit user);
-int power(int base, int exp);
-int sqroot(double square);
+//int sqroot(double square);
 void Timer0_ISR(void);
 
-int overFlows = 0x0000;
-unsigned long avg0[7] ; //store average for user 1
-unsigned long avg1[7] ;//store average for user 2
-unsigned char testingTimes[7]; //store testing time
+char overFlows = 0x0000;
+unsigned int avg0[7] ; //store average for user 1
+unsigned int avg1[7] ;//store average for user 2
+unsigned int testingTimes[7]; //store testing time
 unsigned char password  [7] = "aaaaaaa";  //to store the password
 char test = '0';  // for now it's zero, but later on it will be from an input pin
 char user = '0';   //for now it's zero, but later on it will be from an input pin
@@ -117,12 +116,10 @@ void trainUserX (bit user){
 						uart_msg("      \n");
 					}
 					
-					if(!test && !user){ 
-						avg0[i] += (overFlows << 16) | (TH0 << 8) | TL0;
-					} else if(!test && user){
-						avg1[i] += (overFlows << 16) | (TH0 << 8) | TL0;
-					} else if(test){
-						testingTimes[i] += (overFlows << 16) | (TH0 << 8) | TL0;
+					if(!user){ 
+						avg0[i] += overFlows;
+					} else if(user){
+						avg1[i] += overFlows;
 					}
 					
 					overFlows = 0x00;
@@ -159,7 +156,7 @@ void testingPhase(){
 			uart_msg("      \n");
 		}
 		
-		testingTimes[i] += (overFlows << 16) | (TH0 << 8) | TL0;
+		testingTimes[i] += overFlows;
 					
 		overFlows = 0x00;
 				
@@ -192,35 +189,19 @@ int getEuclideanDistance(bit user){
 	for(i=0;i<7;i++){
 		
 		if(!user){
-				euclideanDistance += power(testingTimes[i] - avg0[i], 2);
+				euclideanDistance += (testingTimes[i] - avg0[i])*(testingTimes[i] - avg0[i]);
 		} else {
-				euclideanDistance += power(testingTimes[i] - avg1[i], 2);
+				euclideanDistance += (testingTimes[i] - avg1[i])*(testingTimes[i] - avg1[i]);
 		}
-		
-		euclideanDistance = sqroot(euclideanDistance);
-		
-		return euclideanDistance;
 		
 	}
 	
-}
-
-int power(int base, int exp){
-	if(exp < 0)
-		return -1;
-
-  result = 1;
+	//euclideanDistance = sqroot(euclideanDistance);		
 	
-  while (exp){
-		if (exp & 1)
-			result *= base;
-		exp >>= 1;
-    base *= base;
-  }
-
-	return result;
-}
+	return euclideanDistance;
 	
+}
+/*
 int sqroot(int square){
     int root=square/3;
     int i;
@@ -229,7 +210,7 @@ int sqroot(int square){
         root = (root + square / root) / 2;
     return root;
 }
-
+*/
 
 void uart_msg(char *p){
 	
