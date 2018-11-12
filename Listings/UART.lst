@@ -1,4 +1,4 @@
-C51 COMPILER V9.59.0.0   UART                                                              11/09/2018 18:39:06 PAGE 1   
+C51 COMPILER V9.59.0.0   UART                                                              11/12/2018 14:37:26 PAGE 1   
 
 
 C51 COMPILER V9.59.0.0, COMPILATION OF MODULE UART
@@ -9,136 +9,213 @@ COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE UART.c OPTIMIZE(8,SPEED) BROWSE 
 line level    source
 
    1          #include<reg51.h>
-   2          #include <stdio.h>
-   3          #include <string.h>
-   4          
-   5          void uart_init();       //Initialize UART
-   6          void timer_init();      // Timer 2 in mode 2
-   7          void uart_tx(char x);   //Transmission function
-   8          char uart_rx();         //Receiving function
-   9          void uart_msg(char *p);         //String transmission
-  10          void newLine();
-  11          void wait4Letter(char x);
-  12          void startTimer();
-  13          //void endTimer();
-  14          
-  15          int overFlows = 0x0000;
-  16          
-  17          void Timer0_ISR(void) interrupt 1 {
-  18   1        TR0 = 0;
-  19   1        //uart_msg("OverFlow Detected");
-  20   1        overFlows ++;
-  21   1        TF0 = 0;
-  22   1        TR0 = 1;
-  23   1        
-  24   1      }
-  25          
-  26          void main(void){
+   2          #include <string.h>
+   3          
+   4          void uart_init();       //Initialize UART
+   5          void timer_init();      // Timer 2 in mode 2
+   6          void uart_tx(char x);   //Transmission function
+   7          char uart_rx();         //Receiving function
+   8          void uart_msg(char *p);         //String transmission
+   9          void newLine();
+  10          void wait4Letter(char x);
+  11          void startTimer();
+  12          void endTimer();
+  13          void trainUserX(bit user);
+  14          void Timer0_ISR(void);
+  15          
+  16          int overFlows = 0x0000;
+  17          unsigned long avg0[7] ; //store average for user 1
+  18          unsigned long avg1[7] ;//store average for user 2
+  19          unsigned char testingTimes[7]; //store testing time
+  20          unsigned char password  [7] = "aaaaaaa";  //to store the password
+  21          char test = '0';  // for now it's zero, but later on it will be from an input pin
+  22          char user = '0';   //for now it's zero, but later on it will be from an input pin
+  23          
+  24          void main(void){
+  25   1        
+  26   1        // Initialize UART settings
   27   1        
-  28   1        unsigned char x ;
-  29   1        bit test = 0;  // for now it's zero, but later on it will be from an input pin
-  30   1        bit user = 0 ; // for now it's user zero
-  31   1        
-  32   1        uart_init();
-  33   1        
-  34   1        startTimer();
-  35   1        wait4Letter('a');
-  36   1        //endTimer();
-  37   1        
-  38   1        while(1){
-  39   2            if(!test){
-  40   3            
-  41   3              // CODE FOR TRAINING 
-  42   3            }
-  43   2            
-  44   2            if(test){
-  45   3            
-  46   3              // CODE FOR TESTING
-  47   3            }
-  48   2          
-  49   2          
-  50   2        }
-  51   1      }
-*** WARNING C280 IN LINE 28 OF UART.c: 'x': unreferenced local variable
-  52          
-  53          void wait4Letter(char x){
-C51 COMPILER V9.59.0.0   UART                                                              11/09/2018 18:39:06 PAGE 2   
+  28   1        uart_init();
+  29   1        
+  30   1        while(1){
+  31   2            
+  32   2            if(test == '0'){
+  33   3              
+  34   3              uart_msg("Now training  ");
+  35   3              
+  36   3              while(test == '0'){
+  37   4                
+  38   4                uart_msg("pick user 0 or 1 to train  ");
+  39   4                
+  40   4                user = uart_rx() ;
+  41   4                
+  42   4                if(user == '0'){
+  43   5                  trainUserX(0);
+  44   5                }
+  45   4                else if(user == '1'){
+  46   5                  trainUserX(1);
+  47   5                }
+  48   4                
+  49   4                uart_msg("press 0 to train again  or 1 to test   ");
+  50   4                test = uart_rx();
+  51   4                uart_tx(test);
+  52   4              }
+  53   3            
+  54   3            }
+C51 COMPILER V9.59.0.0   UART                                                              11/12/2018 14:37:26 PAGE 2   
 
-  54   1      
-  55   1        while(1){
-  56   2          char y = uart_rx();
-  57   2          uart_tx(y);
-  58   2            
-  59   2          if(y == x){
-  60   3            uart_msg("recieved");
-  61   3            uart_tx(x);
-  62   3            return;
-  63   3          }
-  64   2          else{
-  65   3            uart_msg("Wrong character !");
-  66   3          }
-  67   2        }
-  68   1      }
-  69          
-  70          void startTimer(){
-  71   1        TH0 = 0x00;
-  72   1        TR0 = 1;
-  73   1        ET0 = 1;
-  74   1        EA = 1;
-  75   1      }
-  76          
-  77          void uart_init(){
-  78   1         SCON = 0x50;
-  79   1         timer_init();
-  80   1      }
-  81          
-  82          void timer_init(){
-  83   1        TMOD = 0x22;
-  84   1        TH1 = 0xFD;
-  85   1        TR1 = 1;
-  86   1      }
-  87          
-  88          void uart_tx(char x){
-  89   1        SBUF = x;
-  90   1        
-  91   1        while(!TI);
-  92   1        
-  93   1        TI = 0;
-  94   1      }
-  95          
-  96          char uart_rx(){
-  97   1        char x;
-  98   1        //REN = 1;
-  99   1        while(!RI);
- 100   1        x = SBUF;
- 101   1        RI = 0;
- 102   1        return x;
- 103   1      }
- 104          
- 105          void uart_msg(char *p){
- 106   1        
- 107   1        while(*p != 0){
- 108   2          uart_tx(*p);
- 109   2          p++;
- 110   2        }
- 111   1      }
- 112          
- 113          void newLine(){
- 114   1        uart_tx(0x0D);
- 115   1      }
-C51 COMPILER V9.59.0.0   UART                                                              11/09/2018 18:39:06 PAGE 3   
+  55   2            
+  56   2            if(test== '1'){
+  57   3            
+  58   3              // CODE FOR TESTING
+  59   3            }
+  60   2          
+  61   2          
+  62   2        }
+  63   1      }
+  64          
+  65          
+  66          void trainUserX (bit user){
+  67   1        
+  68   1          unsigned char j;
+  69   1          unsigned char i;
+  70   1          // CODE FOR TRAINING 
+  71   1              
+  72   1          // FOR EACH TRIAL
+  73   1          for(j = '0'; j<'5' ; j++){
+  74   2            
+  75   2            uart_msg("trial number ");
+  76   2            uart_tx(j);
+  77   2            uart_msg("      ");
+  78   2                    
+  79   2              // FOR EACH LETTER
+  80   2              for( i = 0; i<7;i++){
+  81   3                      
+  82   3                startTimer();
+  83   3                wait4Letter(password[i]);
+  84   3                endTimer();
+  85   3                      
+  86   3                if(!user){
+  87   4                  avg0[i] += (overFlows << 16) | (TH0 << 8) | TL0;
+  88   4                }
+  89   3                else{
+  90   4                  avg1[i] += (overFlows << 16) | (TH0 << 8) | TL0;
+  91   4                }
+  92   3                
+  93   3                overFlows = 0x00;
+  94   3              
+  95   3              }
+  96   2                
+  97   2          }
+  98   1              
+  99   1          for(i = 0 ; i<7 ; i++){
+ 100   2            
+ 101   2          avg0[i] /= 5 ;
+ 102   2            
+ 103   2          }
+ 104   1      }
+ 105          
+ 106          void wait4Letter(char x){
+ 107   1      
+ 108   1        while(1){
+ 109   2          char y = uart_rx();
+ 110   2          
+ 111   2          if(y == x){
+ 112   3            uart_msg("recieved   ");
+ 113   3            uart_tx(x);
+ 114   3            return;
+ 115   3          }
+ 116   2          else{
+C51 COMPILER V9.59.0.0   UART                                                              11/12/2018 14:37:26 PAGE 3   
 
+ 117   3            uart_msg("Wrong character !   ");
+ 118   3          }
+ 119   2        }
+ 120   1      }
+ 121          
+ 122          void uart_msg(char *p){
+ 123   1        
+ 124   1        while(*p != 0){
+ 125   2          uart_tx(*p);
+ 126   2          p++;
+ 127   2        }
+ 128   1        
+ 129   1        return;
+ 130   1        
+ 131   1      }
+ 132          
+ 133          void startTimer(){
+ 134   1        TH0 = 0x00;
+ 135   1        TL0 = 0x00;
+ 136   1        TR0 = 1;
+ 137   1        ET0 = 1;
+ 138   1        EA = 1;
+ 139   1      }
+ 140          
+ 141          void endTimer(){
+ 142   1        TR0 = 0;
+ 143   1        ET0 = 0;
+ 144   1        EA = 0;
+ 145   1      }
+ 146          
+ 147          void uart_init(){
+ 148   1         SCON = 0x50;
+ 149   1         timer_init();
+ 150   1      }
+ 151          
+ 152          void timer_init(){
+ 153   1        TMOD = 0x21;
+ 154   1        TH1 = 0xFD;
+ 155   1        TR1 = 1;
+ 156   1      }
+ 157          
+ 158          void uart_tx(char x){
+ 159   1        SBUF = x;
+ 160   1        
+ 161   1        while(!TI);
+ 162   1        
+ 163   1        TI = 0;
+ 164   1      }
+ 165          
+ 166          char uart_rx(){
+ 167   1        char x;
+ 168   1        //REN = 1;
+ 169   1        while(!RI);
+ 170   1        x = SBUF;
+ 171   1        RI = 0;
+ 172   1        return x;
+ 173   1      }
+ 174          
+ 175          void Timer0_ISR(void) interrupt 1 {
+ 176   1        TR0 = 0;
+ 177   1        //uart_msg("OverFlow Detected");
+ 178   1        overFlows ++;
+C51 COMPILER V9.59.0.0   UART                                                              11/12/2018 14:37:26 PAGE 4   
+
+ 179   1        TH0 = 0x00;
+ 180   1        TL0 = 0x00;
+ 181   1        TF0 = 0;
+ 182   1        TR0 = 1;
+ 183   1        
+ 184   1      }
+ 185          
+ 186          
+ 187          
+ 188          void newLine(){
+ 189   1        uart_tx(0x0D);
+ 190   1      }
+ 191          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    149    ----
-   CONSTANT SIZE    =     27    ----
+   CODE SIZE        =    500    ----
+   CONSTANT SIZE    =    137    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =      2       3
+   DATA SIZE        =     74       7
    IDATA SIZE       =   ----    ----
-   BIT SIZE         =   ----       2
+   BIT SIZE         =   ----       1
 END OF MODULE INFORMATION.
 
 
-C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
