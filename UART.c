@@ -1,5 +1,4 @@
 #include<reg51.h>
-#include <string.h>
 
 void uart_init();				//Initialize UART
 void timer_init(); 			// Timer 2 in mode 2
@@ -11,6 +10,10 @@ void wait4Letter(char x);
 void startTimer();
 void endTimer();
 void trainUserX(bit user);
+void testingPhase();
+int getEuclideanDistance(bit user);
+int power(int base, int exp);
+int sqroot(double square);
 void Timer0_ISR(void);
 
 int overFlows = 0x0000;
@@ -20,6 +23,11 @@ unsigned char testingTimes[7]; //store testing time
 unsigned char password  [7] = "aaaaaaa";  //to store the password
 char test = '0';  // for now it's zero, but later on it will be from an input pin
 char user = '0';   //for now it's zero, but later on it will be from an input pin
+char correct = '0'; // To check that the user entered a correct expected value to the UART
+int euclideanDistance0 = 0 ;
+int euclideanDistance1 = 0 ;
+
+int result = 1;
 
 void main(void){
 	
@@ -29,42 +37,58 @@ void main(void){
 	
 	while(1){
 			
-			if(test == '0'){
+		correct = '0';
+					
+		while(correct == '0'){
+			uart_msg("press 0 to train or 1 to test   \n");
+			test = uart_rx();
+			if((test == '0') || (test == '1')){
+				correct = '1';
+			}
+		}
+			
+		if(test == '0'){
 				
-				uart_msg("Now training  ");
-				
-				while(test == '0'){
+			uart_msg("Now training  \n");
+									
+			correct = '0';
 					
-					uart_msg("pick user 0 or 1 to train  ");
-					
-					user = uart_rx() ;
-					
-					if(user == '0'){
-						trainUserX(0);
-					}
-					else if(user == '1'){
-						trainUserX(1);
-					}
-					
-					uart_msg("press 0 to train again  or 1 to test   ");
-					test = uart_rx();
-					uart_tx(test);
+			while(correct == '0'){
+				uart_msg("pick user 0 or 1 to train  \n");
+						
+				user = uart_rx();
+				if((user == '0') || (user == '1')){
+					correct = '1';
 				}
-			
+			}
+					
+			if(user == '0'){
+				trainUserX(0);
+			}
+			else if(user == '1'){
+				trainUserX(1);
 			}
 			
-			if(test== '1'){
+		}
 			
-				// CODE FOR TESTING
+			if(test == '1'){
 				
-				/////////////////////////////////
-				// RONY YOUR CODE STARTS HERE////
-				/////////////////////////////////
+				testingPhase();
+				euclideanDistance0 = getEuclideanDistance(0);
+				euclideanDistance1 = getEuclideanDistance(1);
+			
+				//uart_msg(euclideanDistance0);
+				//uart_msg("\n");
 				
+				if(euclideanDistance0 > euclideanDistance1){
+					uart_msg("User 1 \n");
+				} else if(euclideanDistance0 < euclideanDistance1){
+					uart_msg("User 0 \n");
+				} else {
+					uart_msg("A Tie \n");
+				}
 				
 			}
-		
-		
 	}
 }
 
@@ -80,7 +104,7 @@ void trainUserX (bit user){
 			
 			uart_msg("trial number ");
 			uart_tx(j);
-			uart_msg("      ");
+			uart_msg("      \n");
 							
 				// FOR EACH LETTER
 				for( i = 0; i<7;i++){
@@ -89,11 +113,16 @@ void trainUserX (bit user){
 					wait4Letter(password[i]);
 					endTimer();
 								
-					if(!user){
-						avg0[i] += (overFlows << 16) | (TH0 << 8) | TL0;
+					if(i == 6){
+						uart_msg("      \n");
 					}
-					else{
+					
+					if(!test && !user){ 
+						avg0[i] += (overFlows << 16) | (TH0 << 8) | TL0;
+					} else if(!test && user){
 						avg1[i] += (overFlows << 16) | (TH0 << 8) | TL0;
+					} else if(test){
+						testingTimes[i] += (overFlows << 16) | (TH0 << 8) | TL0;
 					}
 					
 					overFlows = 0x00;
@@ -103,11 +132,40 @@ void trainUserX (bit user){
 		}
 				
 		for(i = 0 ; i<7 ; i++){
-			
-		avg0[i] /= 5 ;
-			
+			if(!user){ 
+				avg0[i] /= 5;
+			} else {
+				avg1[i] /= 5;
+			}
 		}
 }
+
+void testingPhase(){
+	
+	unsigned char i;
+
+	// CODE FOR Testing 
+
+	uart_msg("Testing! \n");
+	
+	// FOR EACH LETTER
+	for( i = 0; i<7;i++){
+								
+		startTimer();
+		wait4Letter(password[i]);
+		endTimer();
+								
+		if(i == 6){
+			uart_msg("      \n");
+		}
+		
+		testingTimes[i] += (overFlows << 16) | (TH0 << 8) | TL0;
+					
+		overFlows = 0x00;
+				
+	}				
+}
+
 
 void wait4Letter(char x){
 
@@ -117,13 +175,61 @@ void wait4Letter(char x){
 		if(y == x){
 			uart_msg("recieved   ");
 			uart_tx(x);
+			uart_msg(" / ");
 			return;
 		}
 		else{
-			uart_msg("Wrong character !   ");
+			uart_msg(" Wrong character ! / ");
 		}
 	}
 }
+
+int getEuclideanDistance(bit user){
+	unsigned char i;
+
+	int euclideanDistance = 0;
+	
+	for(i=0;i<7;i++){
+		
+		if(!user){
+				euclideanDistance += power(testingTimes[i] - avg0[i], 2);
+		} else {
+				euclideanDistance += power(testingTimes[i] - avg1[i], 2);
+		}
+		
+		euclideanDistance = sqroot(euclideanDistance);
+		
+		return euclideanDistance;
+		
+	}
+	
+}
+
+int power(int base, int exp){
+	if(exp < 0)
+		return -1;
+
+  result = 1;
+	
+  while (exp){
+		if (exp & 1)
+			result *= base;
+		exp >>= 1;
+    base *= base;
+  }
+
+	return result;
+}
+	
+int sqroot(int square){
+    int root=square/3;
+    int i;
+    if (square <= 0) return 0;
+    for (i=0; i<16; i++)
+        root = (root + square / root) / 2;
+    return root;
+}
+
 
 void uart_msg(char *p){
 	
