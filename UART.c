@@ -11,154 +11,195 @@ void startTimer();
 void endTimer();
 void trainUserX(bit user);
 void testingPhase();
-int getEuclideanDistance(bit user);
-//int sqroot(double square);
+long getEuclideanDistance(bit user);
 void Timer0_ISR(void);
 
-char overFlows = 0x0000;
-unsigned int avg0[7] ; //store average for user 1
-unsigned int avg1[7] ;//store average for user 2
-unsigned int testingTimes[7]; //store testing time
-unsigned char password  [7] = "aaaaaaa";  //to store the password
+unsigned int overFlows = 0;
+unsigned int avg0[10] ; //store average for user 1
+unsigned int avg1[10] ;//store average for user 2
+unsigned int testingTimes[10]; //store testing time
+unsigned char password  [10] = ".tie5Ronal";  //to store the password
 char test = '0';  // for now it's zero, but later on it will be from an input pin
 char user = '0';   //for now it's zero, but later on it will be from an input pin
 char correct = '0'; // To check that the user entered a correct expected value to the UART
-int euclideanDistance0 = 0 ;
-int euclideanDistance1 = 0 ;
+long euclideanDistance0 = 0 ;
+long euclideanDistance1 = 0 ;
 
-int result = 1;
+sbit switch1 = P0^0;
+sbit switch2 = P0^1;
+sbit led = P0^3;
 
 void main(void){
 	
 	// Initialize UART settings
-	
+
+	led = 0;
+	//P0 = 0X04; // Set P0^0 and P0^1 as Input and P0^2 as Output
+		
 	uart_init();
 	
-	while(1){
-			
-		correct = '0';
+	uart_msg("Please set the Switch 1 to Train(0) and Switch 2 to User 0 \n");
 					
-		while(correct == '0'){
-			uart_msg("press 0 to train or 1 to test   \n");
-			test = uart_rx();
-			if((test == '0') || (test == '1')){
-				correct = '1';
-			}
-		}
+	while(switch1 != 0 || switch2 != 0);
 			
-		if(test == '0'){
-				
-			uart_msg("Now training  \n");
-									
-			correct = '0';
+	uart_msg("Now training User 0 \n");
+			
+	uart_msg("Press any button to start \n");		
+	
+	uart_rx();
+	
+	trainUserX(0);
+		
+	uart_msg("Please set the Switch 1 to Train(0) and Switch 2 to User 1 \n");
 					
-			while(correct == '0'){
-				uart_msg("pick user 0 or 1 to train  \n");
-						
-				user = uart_rx();
-				if((user == '0') || (user == '1')){
-					correct = '1';
-				}
-			}
-					
-			if(user == '0'){
-				trainUserX(0);
-			}
-			else if(user == '1'){
-				trainUserX(1);
-			}
+	while(switch1 != 0 || switch2 != 1);
+
+	uart_msg("Now training User 1 \n");	
+		
+	uart_msg("Press any button to start \n");		
+	
+	uart_rx();
 			
-		}
+	trainUserX(1);
 			
-			if(test == '1'){
-				
-				testingPhase();
-				euclideanDistance0 = getEuclideanDistance(0);
-				euclideanDistance1 = getEuclideanDistance(1);
-			
-				//uart_msg(euclideanDistance0);
-				//uart_msg("\n");
-				
-				if(euclideanDistance0 > euclideanDistance1){
-					uart_msg("User 1 \n");
-				} else if(euclideanDistance0 < euclideanDistance1){
-					uart_msg("User 0 \n");
-				} else {
-					uart_msg("A Tie \n");
-				}
-				
-			}
+	uart_msg("Please set the Switch 1 to Test(1)  \n");
+
+	while(switch1 != 1);
+	
+	uart_msg("Now testing \n");	
+		
+	uart_msg("Press any button to start \n");		
+	
+	uart_rx();
+
+	testingPhase();
+	
+	euclideanDistance0 = getEuclideanDistance(0);
+	euclideanDistance1 = getEuclideanDistance(1);
+
+	if(euclideanDistance1 > euclideanDistance0){
+		uart_msg("You are User 0 \n");
+
+		led = 1;
+
+		startTimer();
+		while(overFlows < 100);
+		endTimer();
+	
+		led = 0;
+	
+	} else if(euclideanDistance1 < euclideanDistance0){
+		uart_msg("You are User 1 \n");
+	
+		led = 1;
+		
+		startTimer();
+		while(overFlows < 100);
+		endTimer();
+		
+		led = 0;
+		
+		startTimer();
+		while(overFlows < 100);
+		endTimer();
+		
+		led = 1;
+		
+		startTimer();
+		while(overFlows < 100);
+		endTimer();
+		
+		led = 0;
+		
+	} else {
+		uart_msg("I do not know! \n");
 	}
+
 }
 
 
 void trainUserX (bit user){
+
+	unsigned char j;
+	unsigned char i;
 	
-		unsigned char j;
-		unsigned char i;
-		// CODE FOR TRAINING 
+	for( i = 0; i<10; i++){
+		if(!user){
+			avg0[i] = 0;		
+		} else{
+			avg1[i] = 0;
+		}
+	}
+
+	// CODE FOR TRAINING 
 				
-		// FOR EACH TRIAL
-		for(j = '0'; j<'5' ; j++){
+	// FOR EACH TRIAL
+	for(j = '0'; j<'5' ; j++){
 			
-			uart_msg("trial number ");
-			uart_tx(j);
-			uart_msg("      \n");
+		uart_msg("trial number ");
+		uart_tx(j);
+		uart_msg("      \n");
 							
-				// FOR EACH LETTER
-				for( i = 0; i<7;i++){
+		// FOR EACH LETTER
+		for( i = 0; i<10;i++){
 								
-					startTimer();
-					wait4Letter(password[i]);
-					endTimer();
+			startTimer();
+			wait4Letter(password[i]);
+			endTimer();
 								
-					if(i == 6){
-						uart_msg("      \n");
-					}
-					
-					if(!user){ 
-						avg0[i] += overFlows;
-					} else if(user){
-						avg1[i] += overFlows;
-					}
-					
-					overFlows = 0x00;
-				
-				}
-					
-		}
-				
-		for(i = 0 ; i<7 ; i++){
-			if(!user){ 
-				avg0[i] /= 5;
-			} else {
-				avg1[i] /= 5;
+			if(i == 4 || i == 9){
+				uart_msg("      \n");
 			}
+					
+			if(!user){ 
+				avg0[i] += overFlows;
+			} else if(user){
+				avg1[i] += overFlows;
+			}
+					
+			overFlows = 0;
+				
 		}
+					
+	}
+				
+	for(i = 0 ; i<10 ; i++){
+		if(!user){ 
+			avg0[i] /= 5;
+		} else {
+			avg1[i] /= 5;
+		}
+	}
 }
 
 void testingPhase(){
 	
 	unsigned char i;
 
+	for( i = 0; i<10; i++){
+		testingTimes[i] = 0;
+	}
+	
 	// CODE FOR Testing 
 
 	uart_msg("Testing! \n");
-	
+		
+	overFlows = 0;
+
 	// FOR EACH LETTER
-	for( i = 0; i<7;i++){
+	for( i = 0; i<10;i++){
 								
 		startTimer();
 		wait4Letter(password[i]);
 		endTimer();
 								
-		if(i == 6){
+		if(i == 4 || i == 9){
 			uart_msg("      \n");
 		}
 		
 		testingTimes[i] += overFlows;
 					
-		overFlows = 0x00;
+		overFlows = 0;
 				
 	}				
 }
@@ -181,12 +222,12 @@ void wait4Letter(char x){
 	}
 }
 
-int getEuclideanDistance(bit user){
+long getEuclideanDistance(bit user){
 	unsigned char i;
 
-	int euclideanDistance = 0;
+	long euclideanDistance = 0;
 	
-	for(i=0;i<7;i++){
+	for(i=0;i<10;i++){
 		
 		if(!user){
 				euclideanDistance += (testingTimes[i] - avg0[i])*(testingTimes[i] - avg0[i]);
@@ -224,6 +265,7 @@ void uart_msg(char *p){
 }
 
 void startTimer(){
+	overFlows = 0;
 	TH0 = 0x00;
 	TL0 = 0x00;
 	TR0 = 1;
