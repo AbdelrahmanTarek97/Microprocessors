@@ -1,4 +1,4 @@
-C51 COMPILER V9.59.0.0   UART                                                              11/14/2018 00:10:28 PAGE 1   
+C51 COMPILER V9.59.0.0   UART                                                              11/14/2018 00:22:13 PAGE 1   
 
 
 C51 COMPILER V9.59.0.0, COMPILATION OF MODULE UART
@@ -62,7 +62,7 @@ line level    source
   52   1          
   53   1        uart_msg("Please set the Switch 1 to Train(0) and Switch 2 to User 1 \n");
   54   1                
-C51 COMPILER V9.59.0.0   UART                                                              11/14/2018 00:10:28 PAGE 2   
+C51 COMPILER V9.59.0.0   UART                                                              11/14/2018 00:22:13 PAGE 2   
 
   55   1        while(switch1 != 0 || switch2 != 1);
   56   1      
@@ -95,7 +95,7 @@ line level    source
   83   2          led = 1;
   84   2      
   85   2          startTimer();
-  86   2          while(overFlows < 100);
+  86   2          while(overFlows < 50);
   87   2          endTimer();
   88   2        
   89   2          led = 0;
@@ -106,19 +106,19 @@ line level    source
   94   2          led = 1;
   95   2          
   96   2          startTimer();
-  97   2          while(overFlows < 100);
+  97   2          while(overFlows < 50);
   98   2          endTimer();
   99   2          
  100   2          led = 0;
  101   2          
  102   2          startTimer();
- 103   2          while(overFlows < 100);
+ 103   2          while(overFlows < 50);
  104   2          endTimer();
  105   2          
  106   2          led = 1;
  107   2          
  108   2          startTimer();
- 109   2          while(overFlows < 100);
+ 109   2          while(overFlows < 50);
  110   2          endTimer();
  111   2          
  112   2          led = 0;
@@ -126,7 +126,7 @@ line level    source
  114   2        } else {
  115   2          uart_msg("I do not know! \n");
  116   2        }
-C51 COMPILER V9.59.0.0   UART                                                              11/14/2018 00:10:28 PAGE 3   
+C51 COMPILER V9.59.0.0   UART                                                              11/14/2018 00:22:13 PAGE 3   
 
  117   1      
  118   1      }
@@ -190,7 +190,7 @@ line level    source
  176   1        
  177   1        unsigned char i;
  178   1      
-C51 COMPILER V9.59.0.0   UART                                                              11/14/2018 00:10:28 PAGE 4   
+C51 COMPILER V9.59.0.0   UART                                                              11/14/2018 00:22:13 PAGE 4   
 
  179   1        for( i = 0; i<10; i++){
  180   2          testingTimes[i] = 0;
@@ -254,7 +254,7 @@ line level    source
  238   2        }
  239   1        
  240   1        //euclideanDistance = sqroot(euclideanDistance);    
-C51 COMPILER V9.59.0.0   UART                                                              11/14/2018 00:10:28 PAGE 5   
+C51 COMPILER V9.59.0.0   UART                                                              11/14/2018 00:22:13 PAGE 5   
 
  241   1        
  242   1        return euclideanDistance;
@@ -318,7 +318,7 @@ line level    source
  300          
  301          char uart_rx(){
  302   1        char x;
-C51 COMPILER V9.59.0.0   UART                                                              11/14/2018 00:10:28 PAGE 6   
+C51 COMPILER V9.59.0.0   UART                                                              11/14/2018 00:22:13 PAGE 6   
 
  303   1        //REN = 1;
  304   1        while(!RI);

@@ -83,7 +83,7 @@ void main(void){
 		led = 1;
 
 		startTimer();
-		while(overFlows < 100);
+		while(overFlows < 50);
 		endTimer();
 	
 		led = 0;
@@ -94,19 +94,19 @@ void main(void){
 		led = 1;
 		
 		startTimer();
-		while(overFlows < 100);
+		while(overFlows < 50);
 		endTimer();
 		
 		led = 0;
 		
 		startTimer();
-		while(overFlows < 100);
+		while(overFlows < 50);
 		endTimer();
 		
 		led = 1;
 		
 		startTimer();
-		while(overFlows < 100);
+		while(overFlows < 50);
 		endTimer();
 		
 		led = 0;
