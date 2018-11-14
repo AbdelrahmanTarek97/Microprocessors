@@ -1,168 +1,168 @@
 #include<reg51.h>
 
 void uart_init();				//Initialize UART
-void timer_init(); 			// Timer 2 in mode 2
+void timer_init(); 			// Timer 2 in mode 2 used for initialization of UART
 void uart_tx(char x);		//Transmission function
 char uart_rx();					//Receiving function
-void uart_msg(char *p);   			//String transmission
-void newLine();
-void wait4Letter(char x);
-void startTimer();
-void endTimer();
-void trainUserX(bit user);
-void testingPhase();
-long getEuclideanDistance(bit user);
-void Timer0_ISR(void);
+void uart_msg(char *p); //String transmission
+void wait4Letter(char x); // A method that waits until the desired letter is entered 
+void startTimer(); // Start the timer so the overFlows are calculated by the interrupts
+void endTimer(); // Stop the timer
+void Timer0_ISR(void); // A method that detects the interrupts in the timer
+void trainUserX(bit user); // A method that lets a certain user to enter .tie5Ronal five times
+void testingPhase(); // A method that enables any user to enter .tie5Ronal for testing 
+long getEuclideanDistance(bit user); // A method that gets the euclidean difference between a ceratin user and the tested user
 
-unsigned int overFlows = 0;
-unsigned int avg0[10] ; //store average for user 1
-unsigned int avg1[10] ;//store average for user 2
-unsigned int testingTimes[10]; //store testing time
-unsigned char password  [10] = ".tie5Ronal";  //to store the password
-char test = '0';  // for now it's zero, but later on it will be from an input pin
-char user = '0';   //for now it's zero, but later on it will be from an input pin
-char correct = '0'; // To check that the user entered a correct expected value to the UART
-long euclideanDistance0 = 0 ;
-long euclideanDistance1 = 0 ;
+unsigned int overFlows = 0; // This is our unit time in the program. It is the difference between a key stroke and another
+unsigned int avg0[10] ; //store average keystrokes for user 1
+unsigned int avg1[10] ;//store average keystrokes for user 2
+unsigned int testingTimes[10]; //store testing time of random user
+unsigned char password  [10] = ".tie5Ronal";  //The password the users will enter
+long euclideanDistance0 = 0 ; // The euclidean distance between user 0 and the random user
+long euclideanDistance1 = 0 ;// The euclidean distance between user 1 and the random user
 
-sbit switch1 = P0^0;
-sbit switch2 = P0^1;
-sbit led = P0^3;
+sbit switch1 = P0^0; // Switch 1 which indicates whether we are in training(0) or testing(1) Phase
+sbit switch2 = P0^1; // Switch 2 which indicates whether user0(0) or user1(1) is entering the password now (In Training phase)
+sbit led = P0^2; // The Led which indicates which user is the random user. Lights up 1 time means User 0, 2 times means User 1
 
 void main(void){
-	
-	// Initialize UART settings
 
-	led = 0;
-	//P0 = 0X04; // Set P0^0 and P0^1 as Input and P0^2 as Output
-		
+	led = 0; // The Led is off at the begining
+	
+	// Initialize UART settings	
 	uart_init();
 	
 	uart_msg("Please set the Switch 1 to Train(0) and Switch 2 to User 0 \n");
 					
-	while(switch1 != 0 || switch2 != 0);
+	while(switch1 != 0 || switch2 != 0); // Wait until the Switch 1 is 0 (Training Phase) and Switch 2 is 0 (User 0)
 			
 	uart_msg("Now training User 0 \n");
 			
-	uart_msg("Press any button to start \n");		
+	uart_msg("Press any button to start \n");		 
 	
-	uart_rx();
+	uart_rx(); // Give the user the chance to start whenever he wants by entering any letter just to start
 	
-	trainUserX(0);
+	trainUserX(0); // Train User 0
 		
 	uart_msg("Please set the Switch 1 to Train(0) and Switch 2 to User 1 \n");
 					
-	while(switch1 != 0 || switch2 != 1);
+	while(switch1 != 0 || switch2 != 1); // Wait until the Switch 1 is 0 (Training Phase) and Switch 2 is 0 (User 1)
 
 	uart_msg("Now training User 1 \n");	
 		
 	uart_msg("Press any button to start \n");		
 	
-	uart_rx();
+	uart_rx(); // Give the user the chance to start whenever he wants by entering any letter just to start
 			
-	trainUserX(1);
+	trainUserX(1); // Train User 1
 			
 	uart_msg("Please set the Switch 1 to Test(1)  \n");
 
-	while(switch1 != 1);
+	while(switch1 != 1); // Wait until the Switch 1 is 1 (Testing Phase)
 	
 	uart_msg("Now testing \n");	
 		
 	uart_msg("Press any button to start \n");		
 	
-	uart_rx();
+	uart_rx(); // Give the user the chance to start whenever he wants by entering any letter just to start
 
-	testingPhase();
+	testingPhase(); // Testing random user
 	
-	euclideanDistance0 = getEuclideanDistance(0);
-	euclideanDistance1 = getEuclideanDistance(1);
+	euclideanDistance0 = getEuclideanDistance(0); // Get the Euclidean Distance between User 0 and Testing User
+	euclideanDistance1 = getEuclideanDistance(1); // Get the Euclidean Distance between User 1 and Testing User
 
-	if(euclideanDistance1 > euclideanDistance0){
+	if(euclideanDistance1 > euclideanDistance0){ // If Euclidean Distance of User 1 is bigger than User 0 then the random user is User 0
 		uart_msg("You are User 0 \n");
 
-		led = 1;
+		// TURN THE LED ON ONCE AND THEN OFF //
+		
+		led = 1; // Turn the LED On
 
 		startTimer();
-		while(overFlows < 50);
+		while(overFlows < 50); // Wait for 50 overflow units
 		endTimer();
 	
-		led = 0;
+		led = 0; // Turn The Led Off
 	
-	} else if(euclideanDistance1 < euclideanDistance0){
+	} else if(euclideanDistance1 < euclideanDistance0){ // If Euclidean Distance of User 1 is smaller than User 0 then the random user is User 1
 		uart_msg("You are User 1 \n");
 	
-		led = 1;
+		// TURN THE LED ON AND THEN OFF AND THEN ON AND THEN OFF //
+		
+		led = 1; // Turn the LED on
 		
 		startTimer();
-		while(overFlows < 50);
+		while(overFlows < 50); // Wait for 50 overflow units
 		endTimer();
 		
-		led = 0;
+		led = 0; // Turn the LED off
 		
 		startTimer();
-		while(overFlows < 50);
+		while(overFlows < 50); // Wait for 50 overflow units
 		endTimer();
 		
-		led = 1;
+		led = 1; // Turn the LED on
 		
 		startTimer();
-		while(overFlows < 50);
+		while(overFlows < 50); // Wait for 50 overflow units
 		endTimer();
 		
-		led = 0;
+		led = 0; // Turn the LED off
 		
-	} else {
+	} else { // If both euclidean distance is the same then we cannot know the random user
 		uart_msg("I do not know! \n");
 	}
 
 }
 
-
+// A method that enables any user to enter .tie5Ronal for testing 
 void trainUserX (bit user){
 
 	unsigned char j;
 	unsigned char i;
 	
+	// First Check That there are no values in avg array by clearing it 
 	for( i = 0; i<10; i++){
 		if(!user){
-			avg0[i] = 0;		
+			avg0[i] = 0;
 		} else{
 			avg1[i] = 0;
 		}
 	}
-
-	// CODE FOR TRAINING 
-				
-	// FOR EACH TRIAL
+	
+	// For each trial and here we have 5 trials
 	for(j = '0'; j<'5' ; j++){
 			
 		uart_msg("trial number ");
 		uart_tx(j);
 		uart_msg("      \n");
 							
-		// FOR EACH LETTER
+		// For each letter and we have 10 letters
 		for( i = 0; i<10;i++){
 								
-			startTimer();
-			wait4Letter(password[i]);
-			endTimer();
+			startTimer(); // Let the timer start so we can count the over flows
+			wait4Letter(password[i]); // Wait util the user enters the desired letter
+			endTimer(); // End timer
 								
-			if(i == 4 || i == 9){
+			if(i == 4 || i == 9){ // Used for better UI Experience in the UART
 				uart_msg("      \n");
 			}
 					
+			// Add all the overflows of every corresponding character in the 5 trials and we will later on divide them by 5(No of Trials)
 			if(!user){ 
 				avg0[i] += overFlows;
 			} else if(user){
 				avg1[i] += overFlows;
 			}
 					
-			overFlows = 0;
+			overFlows = 0; // Reset overFlows to 0
 				
 		}
 					
 	}
-				
+		
+	// Divide by 5(No of Trials) to get the average
+	
 	for(i = 0 ; i<10 ; i++){
 		if(!user){ 
 			avg0[i] /= 5;
@@ -172,44 +172,45 @@ void trainUserX (bit user){
 	}
 }
 
+// A method that enables any user to enter .tie5Ronal for testing 
 void testingPhase(){
 	
 	unsigned char i;
 
+	// First Check That there are no values in testing array by clearing it 
 	for( i = 0; i<10; i++){
 		testingTimes[i] = 0;
 	}
-	
-	// CODE FOR Testing 
 
 	uart_msg("Testing! \n");
 		
 	overFlows = 0;
 
-	// FOR EACH LETTER
+	// For each letter and we have 5 letters
 	for( i = 0; i<10;i++){
 								
-		startTimer();
-		wait4Letter(password[i]);
-		endTimer();
+		startTimer(); // Start timers so we can count the overflows
+		wait4Letter(password[i]); // Wait until random user enter the desired letter 
+		endTimer(); // Stop timer
 								
-		if(i == 4 || i == 9){
+		if(i == 4 || i == 9){ // Used for better UI experience in the UART
 			uart_msg("      \n");
 		}
 		
-		testingTimes[i] += overFlows;
+		testingTimes[i] += overFlows; // Count the overflows
 					
 		overFlows = 0;
 				
 	}				
 }
 
-
+// A method that waits until the desired letter is entered 
 void wait4Letter(char x){
 
 	while(1){
-		char y = uart_rx();
+		char y = uart_rx(); // Get Entered Letter
 		
+		// If the entered letter is as the desired letter then return else then keep looping until desired letter is entered
 		if(y == x){
 			uart_msg("recieved   ");
 			uart_tx(x);
@@ -222,6 +223,7 @@ void wait4Letter(char x){
 	}
 }
 
+// A method that gets the euclidean difference between a ceratin user and the tested user
 long getEuclideanDistance(bit user){
 	unsigned char i;
 
@@ -229,30 +231,19 @@ long getEuclideanDistance(bit user){
 	
 	for(i=0;i<10;i++){
 		
-		if(!user){
+		if(!user){ // The Euclidean Distance is calculated by squaring the difference between two points
 				euclideanDistance += (testingTimes[i] - avg0[i])*(testingTimes[i] - avg0[i]);
 		} else {
 				euclideanDistance += (testingTimes[i] - avg1[i])*(testingTimes[i] - avg1[i]);
 		}
 		
 	}
-	
-	//euclideanDistance = sqroot(euclideanDistance);		
-	
+
 	return euclideanDistance;
 	
 }
-/*
-int sqroot(int square){
-    int root=square/3;
-    int i;
-    if (square <= 0) return 0;
-    for (i=0; i<16; i++)
-        root = (root + square / root) / 2;
-    return root;
-}
-*/
 
+//String transmission
 void uart_msg(char *p){
 	
 	while(*p != 0){
@@ -264,32 +255,37 @@ void uart_msg(char *p){
 	
 }
 
+// Start the timer so the overFlows are calculated by the interrupts
 void startTimer(){
-	overFlows = 0;
-	TH0 = 0x00;
-	TL0 = 0x00;
-	TR0 = 1;
-	ET0 = 1;
-	EA = 1;
+	overFlows = 0; // Clearing the overFlows
+	TH0 = 0x00; // Restarting the timer high bits of timer 0 
+	TL0 = 0x00; // Restarting the timer low bits of timer 0
+	TR0 = 1; // Start timer 0
+	ET0 = 1; // Enable timer 0 interruprs
+	EA = 1; // Enable Interrupts
 }
 
+// Stop the timer
 void endTimer(){
-	TR0 = 0;
-	ET0 = 0;
-	EA = 0;
+	TR0 = 0; // Stop Timer 0 interrupts
+	ET0 = 0; // Disable Timer 0 interrupts
+	EA = 0; // Disable Interrupts
 }
 
+//Initialize UART
 void uart_init(){
 	 SCON = 0x50;
 	 timer_init();
 }
 
+// Timer 2 in mode 2 used for initialization of UART
 void timer_init(){
 	TMOD = 0x21;
 	TH1 = 0xFD;
 	TR1 = 1;
 }
 
+//Transmission function
 void uart_tx(char x){
 	SBUF = x;
 	
@@ -298,6 +294,7 @@ void uart_tx(char x){
 	TI = 0;
 }
 
+//Receiving function
 char uart_rx(){
 	char x;
 	//REN = 1;
@@ -307,20 +304,13 @@ char uart_rx(){
 	return x;
 }
 
+// A method that detects the interrupts in the timer
 void Timer0_ISR(void) interrupt 1 {
 	TR0 = 0;
-	//uart_msg("OverFlow Detected");
-	overFlows ++;
+	overFlows ++; // Incerement Overflows
 	TH0 = 0x00;
 	TL0 = 0x00;
 	TF0 = 0;
-	TR0 = 1;
-	
-}
-
-
-
-void newLine(){
-	uart_tx(0x0D);
+	TR0 = 1;	
 }
 
