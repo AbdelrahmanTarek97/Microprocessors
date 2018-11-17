@@ -14,9 +14,9 @@ void testingPhase(); // A method that enables any user to enter .tie5Ronal for t
 long getEuclideanDistance(bit user); // A method that gets the euclidean difference between a ceratin user and the tested user
 
 unsigned int overFlows = 0; // This is our unit time in the program. It is the difference between a key stroke and another
-unsigned int avg0[10] ; //store average keystrokes for user 1
-unsigned int avg1[10] ;//store average keystrokes for user 2
-unsigned int testingTimes[10]; //store testing time of random user
+unsigned int avg0[9] ; //store average keystrokes for user 1
+unsigned int avg1[9] ;//store average keystrokes for user 2
+unsigned int testingTimes[9]; //store testing time of random user
 unsigned char password  [10] = ".tie5Ronal";  //The password the users will enter
 long euclideanDistance0 = 0 ; // The euclidean distance between user 0 and the random user
 long euclideanDistance1 = 0 ;// The euclidean distance between user 1 and the random user
@@ -38,10 +38,6 @@ void main(void){
 			
 	uart_msg("Now training User 0 \n");
 			
-	uart_msg("Press any button to start \n");		 
-	
-	uart_rx(); // Give the user the chance to start whenever he wants by entering any letter just to start
-	
 	trainUserX(0); // Train User 0
 		
 	uart_msg("Please set the Switch 1 to Train(0) and Switch 2 to User 1 \n");
@@ -50,10 +46,6 @@ void main(void){
 
 	uart_msg("Now training User 1 \n");	
 		
-	uart_msg("Press any button to start \n");		
-	
-	uart_rx(); // Give the user the chance to start whenever he wants by entering any letter just to start
-			
 	trainUserX(1); // Train User 1
 			
 	uart_msg("Please set the Switch 1 to Test(1)  \n");
@@ -61,10 +53,6 @@ void main(void){
 	while(switch1 != 1); // Wait until the Switch 1 is 1 (Testing Phase)
 	
 	uart_msg("Now testing \n");	
-		
-	uart_msg("Press any button to start \n");		
-	
-	uart_rx(); // Give the user the chance to start whenever he wants by entering any letter just to start
 
 	testingPhase(); // Testing random user
 	
@@ -122,54 +110,39 @@ void trainUserX (bit user){
 	unsigned char i;
 	
 	// First Check That there are no values in avg array by clearing it 
-	for( i = 0; i<10; i++){
+	for( i = 0; i<9; i++){
 		if(!user){
 			avg0[i] = 0;
 		} else{
 			avg1[i] = 0;
 		}
 	}
-	
 	// For each trial and here we have 5 trials
 	for(j = '0'; j<'5' ; j++){
-			
 		uart_msg("trial number ");
 		uart_tx(j);
 		uart_msg("      \n");
+		
+		wait4Letter(password[0]);
 							
 		// For each letter and we have 10 letters
-		for( i = 0; i<10;i++){
+		for( i = 0; i<9;i++){
 								
 			startTimer(); // Let the timer start so we can count the over flows
-			wait4Letter(password[i]); // Wait util the user enters the desired letter
+			wait4Letter(password[i+1]); // Wait util the user enters the desired letter
 			endTimer(); // End timer
-								
-			if(i == 4 || i == 9){ // Used for better UI Experience in the UART
-				uart_msg("      \n");
-			}
-					
 			// Add all the overflows of every corresponding character in the 5 trials and we will later on divide them by 5(No of Trials)
 			if(!user){ 
-				avg0[i] += overFlows;
+				avg0[i] += ((overFlows * 65536) + (TH0 << 8) + TL0)/5;
 			} else if(user){
-				avg1[i] += overFlows;
+				avg1[i] += ((overFlows * 65536) + (TH0 << 8) + TL0)/5;
 			}
-					
 			overFlows = 0; // Reset overFlows to 0
 				
 		}
-					
+			uart_msg("\n");					
 	}
-		
-	// Divide by 5(No of Trials) to get the average
 	
-	for(i = 0 ; i<10 ; i++){
-		if(!user){ 
-			avg0[i] /= 5;
-		} else {
-			avg1[i] /= 5;
-		}
-	}
 }
 
 // A method that enables any user to enter .tie5Ronal for testing 
@@ -178,30 +151,30 @@ void testingPhase(){
 	unsigned char i;
 
 	// First Check That there are no values in testing array by clearing it 
-	for( i = 0; i<10; i++){
+	for( i = 0; i<9; i++){
 		testingTimes[i] = 0;
 	}
 
 	uart_msg("Testing! \n");
-		
+
+	wait4Letter(password[0]);
+	
 	overFlows = 0;
 
 	// For each letter and we have 5 letters
-	for( i = 0; i<10;i++){
+	for( i = 0; i<9;i++){
 								
 		startTimer(); // Start timers so we can count the overflows
-		wait4Letter(password[i]); // Wait until random user enter the desired letter 
+		wait4Letter(password[i+1]); // Wait until random user enter the desired letter 
 		endTimer(); // Stop timer
 								
-		if(i == 4 || i == 9){ // Used for better UI experience in the UART
-			uart_msg("      \n");
-		}
-		
-		testingTimes[i] += overFlows; // Count the overflows
+		testingTimes[i] += (overFlows * 65536) + (TH0 << 8) + TL0;
 					
 		overFlows = 0;
 				
-	}				
+	}
+	uart_msg("\n");
+	
 }
 
 // A method that waits until the desired letter is entered 
@@ -212,13 +185,11 @@ void wait4Letter(char x){
 		
 		// If the entered letter is as the desired letter then return else then keep looping until desired letter is entered
 		if(y == x){
-			uart_msg("recieved   ");
 			uart_tx(x);
-			uart_msg(" / ");
 			return;
 		}
 		else{
-			uart_msg(" Wrong character ! / ");
+//			uart_msg(" Wrong character ! / ");
 		}
 	}
 }
