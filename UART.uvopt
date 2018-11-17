@@ -28,7 +28,7 @@
     <TargetOption>
       <CLK51>12000000</CLK51>
       <OPTTT>
-        <gFlags>0</gFlags>
+        <gFlags>1</gFlags>
         <BeepAtEnd>1</BeepAtEnd>
         <RunSim>1</RunSim>
         <RunTarget>0</RunTarget>
@@ -115,7 +115,7 @@
         <sDllPa></sDllPa>
         <sDlgDll></sDlgDll>
         <sDlgPa></sDlgPa>
-        <sIfile></sIfile>
+        <sIfile>.\debugger.ini</sIfile>
         <tDll></tDll>
         <tDllPa></tDllPa>
         <tDlgDll></tDlgDll>
@@ -127,7 +127,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGDC51</Key>
-          <Name>(94=-1,-1,-1,-1,0)(80=818,238,1026,379,1)(81=240,202,448,343,0)(82=-1,-1,-1,-1,0)(83=-1,-1,-1,-1,0)(1200=-1,-1,-1,-1,0)(90=1050,352,1258,623,1)(91=-1,-1,-1,-1,0)</Name>
+          <Name>(94=-1,-1,-1,-1,0)(80=1139,218,1347,359,1)(81=240,202,448,343,0)(82=-1,-1,-1,-1,0)(83=-1,-1,-1,-1,0)(1200=-1,-1,-1,-1,0)(90=1144,369,1352,640,1)(91=-1,-1,-1,-1,0)</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -140,12 +140,12 @@
         <Ww>
           <count>0</count>
           <WinNumber>1</WinNumber>
-          <ItemText>avg0,0x0A</ItemText>
+          <ItemText>avg0,0x10</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
           <WinNumber>1</WinNumber>
-          <ItemText>avg1,0x0A</ItemText>
+          <ItemText>avg1,0x10</ItemText>
         </Ww>
         <Ww>
           <count>2</count>
@@ -239,7 +239,7 @@
         <aLwin>1</aLwin>
         <aCover>0</aCover>
         <aSer1>1</aSer1>
-        <aSer2>0</aSer2>
+        <aSer2>1</aSer2>
         <aPa>0</aPa>
         <viewmode>1</viewmode>
         <vrSel>0</vrSel>

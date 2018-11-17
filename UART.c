@@ -14,37 +14,38 @@ void testingPhase(); // A method that enables any user to enter .tie5Ronal for t
 long getEuclideanDistance(bit user); // A method that gets the euclidean difference between a ceratin user and the tested user
 
 unsigned int overFlows = 0; // This is our unit time in the program. It is the difference between a key stroke and another
-unsigned int avg0[9] ; //store average keystrokes for user 1
-unsigned int avg1[9] ;//store average keystrokes for user 2
-unsigned int testingTimes[9]; //store testing time of random user
+unsigned long xdata avg0[9] ; //store average keystrokes for user 1
+unsigned long xdata avg1[9];//store average keystrokes for user 2
+unsigned long xdata testingTimes[9]; //store testing time of random user
 unsigned char password  [10] = ".tie5Ronal";  //The password the users will enter
-long euclideanDistance0 = 0 ; // The euclidean distance between user 0 and the random user
-long euclideanDistance1 = 0 ;// The euclidean distance between user 1 and the random user
+unsigned long euclideanDistance0 = 0 ; // The euclidean distance between user 0 and the random user
+unsigned long euclideanDistance1 = 0 ;// The euclidean distance between user 1 and the random user
 
 sbit switch1 = P0^0; // Switch 1 which indicates whether we are in training(0) or testing(1) Phase
 sbit switch2 = P0^1; // Switch 2 which indicates whether user0(0) or user1(1) is entering the password now (In Training phase)
 sbit led = P0^2; // The Led which indicates which user is the random user. Lights up 1 time means User 0, 2 times means User 1
 
 void main(void){
+	
 
 	led = 0; // The Led is off at the begining
 	
 	// Initialize UART settings	
 	uart_init();
 	
-	uart_msg("Please set the Switch 1 to Train(0) and Switch 2 to User 0 \n");
+	uart_msg("1 Train0, 2 Train1 \n");
 					
 	while(switch1 != 0 || switch2 != 0); // Wait until the Switch 1 is 0 (Training Phase) and Switch 2 is 0 (User 0)
 			
-	uart_msg("Now training User 0 \n");
+	uart_msg("trainingUser0\n");
 			
 	trainUserX(0); // Train User 0
 		
-	uart_msg("Please set the Switch 1 to Train(0) and Switch 2 to User 1 \n");
+	uart_msg("1 Train0,2 Train1 \n");
 					
 	while(switch1 != 0 || switch2 != 1); // Wait until the Switch 1 is 0 (Training Phase) and Switch 2 is 0 (User 1)
 
-	uart_msg("Now training User 1 \n");	
+	uart_msg("trainingUser1\n");	
 		
 	trainUserX(1); // Train User 1
 			
@@ -52,7 +53,7 @@ void main(void){
 
 	while(switch1 != 1); // Wait until the Switch 1 is 1 (Testing Phase)
 	
-	uart_msg("Now testing \n");	
+	uart_msg("Nowtesting\n");	
 
 	testingPhase(); // Testing random user
 	
@@ -60,7 +61,7 @@ void main(void){
 	euclideanDistance1 = getEuclideanDistance(1); // Get the Euclidean Distance between User 1 and Testing User
 
 	if(euclideanDistance1 > euclideanDistance0){ // If Euclidean Distance of User 1 is bigger than User 0 then the random user is User 0
-		uart_msg("You are User 0 \n");
+		uart_msg("User0! \n");
 
 		// TURN THE LED ON ONCE AND THEN OFF //
 		
@@ -73,7 +74,7 @@ void main(void){
 		led = 0; // Turn The Led Off
 	
 	} else if(euclideanDistance1 < euclideanDistance0){ // If Euclidean Distance of User 1 is smaller than User 0 then the random user is User 1
-		uart_msg("You are User 1 \n");
+		uart_msg("User1! \n");
 	
 		// TURN THE LED ON AND THEN OFF AND THEN ON AND THEN OFF //
 		
@@ -98,7 +99,7 @@ void main(void){
 		led = 0; // Turn the LED off
 		
 	} else { // If both euclidean distance is the same then we cannot know the random user
-		uart_msg("I do not know! \n");
+		uart_msg("tie \n");
 	}
 
 }
@@ -119,9 +120,9 @@ void trainUserX (bit user){
 	}
 	// For each trial and here we have 5 trials
 	for(j = '0'; j<'5' ; j++){
-		uart_msg("trial number ");
+		uart_msg("trial");
 		uart_tx(j);
-		uart_msg("      \n");
+		uart_msg("\n");
 		
 		wait4Letter(password[0]);
 							
@@ -133,9 +134,9 @@ void trainUserX (bit user){
 			endTimer(); // End timer
 			// Add all the overflows of every corresponding character in the 5 trials and we will later on divide them by 5(No of Trials)
 			if(!user){ 
-				avg0[i] += ((overFlows * 65536) + (TH0 << 8) + TL0)/5;
+				avg0[i] += ((overFlows << 16) | (TH0 << 8) | TL0)/5;
 			} else if(user){
-				avg1[i] += ((overFlows * 65536) + (TH0 << 8) + TL0)/5;
+				avg1[i] += ((overFlows << 16) | (TH0 << 8) | TL0)/5;
 			}
 			overFlows = 0; // Reset overFlows to 0
 				
@@ -155,7 +156,7 @@ void testingPhase(){
 		testingTimes[i] = 0;
 	}
 
-	uart_msg("Testing! \n");
+	uart_msg("Testing!\n");
 
 	wait4Letter(password[0]);
 	
