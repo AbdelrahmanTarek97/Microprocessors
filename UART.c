@@ -1,4 +1,5 @@
 #include<reg51.h>
+#include <stdlib.h>
 
 void uart_init();				//Initialize UART
 void timer_init(); 			// Timer 2 in mode 2 used for initialization of UART
@@ -33,27 +34,27 @@ void main(void){
 	// Initialize UART settings	
 	uart_init();
 	
-	uart_msg("Please set the Switch 1 to Train(0) and Switch 2 to User 0 \n");
+	uart_msg("Set Switch 1 to Train(0) and Switch 2 to User 0 \n");
 					
 	while(switch1 != 0 || switch2 != 0); // Wait until the Switch 1 is 0 (Training Phase) and Switch 2 is 0 (User 0)
 			
-	uart_msg("Now training User 0 \n");
+	uart_msg("Training User 0 \n");
 			
 	trainUserX(0); // Train User 0
 		
-	uart_msg("Please set the Switch 1 to Train(0) and Switch 2 to User 1 \n");
+	uart_msg("Set Switch 1 to Train(0) and Switch 2 to User 1 \n");
 					
 	while(switch1 != 0 || switch2 != 1); // Wait until the Switch 1 is 0 (Training Phase) and Switch 2 is 0 (User 1)
 
-	uart_msg("Now training User 1 \n");	
+	uart_msg("training User 1 \n");	
 		
 	trainUserX(1); // Train User 1
 			
-	uart_msg("Please set the Switch 1 to Test(1)  \n");
+	uart_msg("Set Switch 1 to Test(1)  \n");
 
 	while(switch1 != 1); // Wait until the Switch 1 is 1 (Testing Phase)
 	
-	uart_msg("Now testing \n");	
+	uart_msg("Testing \n");	
 
 	testingPhase(); // Testing random user
 	
@@ -136,9 +137,11 @@ void trainUserX (bit user){
 			endTimer(); // End timer
 			// Add all the overflows of every corresponding character in the 5 trials and we will later on divide them by 5(No of Trials)
 			if(!user){ 
-				avg0[i] += overFlows/5;
+				avg0[i] += ((overFlows * 65536) + (TH0 << 8) + TL0)/5;
+				//avg0[i] += overFlows/5;
 			} else if(user){
-				avg1[i] += overFlows/5;
+				avg1[i] += ((overFlows * 65536) + (TH0 << 8) + TL0)/5;
+				//avg1[i] += overFlows/5;
 			}
 			overFlows = 0; // Reset overFlows to 0
 				
@@ -158,8 +161,6 @@ void testingPhase(){
 		testingTimes[i] = 0;
 	}
 
-	uart_msg("Testing!\n");
-
 	wait4Letter(password[0]);
 	
 	// For each letter and we have 5 letters
@@ -169,8 +170,10 @@ void testingPhase(){
 		wait4Letter(password[i+1]); // Wait until random user enter the desired letter 
 		endTimer(); // Stop timer
 								
-		testingTimes[i] += overFlows;
-					
+		testingTimes[i] = ((overFlows * 65536) + (TH0 << 8) + TL0);
+		
+		//testingTimes[i] = overFlows;
+		
 		overFlows = 0;
 				
 	}
@@ -199,14 +202,16 @@ void wait4Letter(char x){
 long getEuclideanDistance(bit user){
 	unsigned char i;
 
-	long euclideanDistance = 0;
+	unsigned long euclideanDistance = 0;
 	
-	for(i=0;i<10;i++){
+	for(i=0;i<9;i++){
 		
 		if(!user){ // The Euclidean Distance is calculated by squaring the difference between two points
-				euclideanDistance += (testingTimes[i] - avg0[i])*(testingTimes[i] - avg0[i]);
+			//euclideanDistance += (testingTimes[i] - avg0[i])*(testingTimes[i] - avg0[i]);
+			euclideanDistance += abs(testingTimes[i] - avg0[i]);
 		} else {
-				euclideanDistance += (testingTimes[i] - avg1[i])*(testingTimes[i] - avg1[i]);
+			//euclideanDistance += (testingTimes[i] - avg1[i]) * (testingTimes[i] - avg1[i]);
+			euclideanDistance += abs(testingTimes[i] - avg1[i]);
 		}
 		
 	}

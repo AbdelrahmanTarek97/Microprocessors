@@ -1,4 +1,4 @@
-C51 COMPILER V9.59.0.0   UART                                                              11/17/2018 20:55:58 PAGE 1   
+C51 COMPILER V9.59.0.0   UART                                                              11/17/2018 21:54:25 PAGE 1   
 
 
 C51 COMPILER V9.59.0.0, COMPILATION OF MODULE UART
@@ -9,320 +9,325 @@ COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE UART.c OPTIMIZE(8,SPEED) BROWSE 
 line level    source
 
    1          #include<reg51.h>
-   2          
-   3          void uart_init();       //Initialize UART
-   4          void timer_init();      // Timer 2 in mode 2 used for initialization of UART
-   5          void uart_tx(char x);   //Transmission function
-   6          char uart_rx();         //Receiving function
-   7          void uart_msg(char *p); //String transmission
-   8          void wait4Letter(char x); // A method that waits until the desired letter is entered 
-   9          void startTimer(); // Start the timer so the overFlows are calculated by the interrupts
-  10          void endTimer(); // Stop the timer
-  11          void Timer0_ISR(void); // A method that detects the interrupts in the timer
-  12          void trainUserX(bit user); // A method that lets a certain user to enter .tie5Ronal five times
-  13          void testingPhase(); // A method that enables any user to enter .tie5Ronal for testing 
-  14          long getEuclideanDistance(bit user); // A method that gets the euclidean difference between a ceratin user
+   2          #include <stdlib.h>
+   3          
+   4          void uart_init();       //Initialize UART
+   5          void timer_init();      // Timer 2 in mode 2 used for initialization of UART
+   6          void uart_tx(char x);   //Transmission function
+   7          char uart_rx();         //Receiving function
+   8          void uart_msg(char *p); //String transmission
+   9          void wait4Letter(char x); // A method that waits until the desired letter is entered 
+  10          void startTimer(); // Start the timer so the overFlows are calculated by the interrupts
+  11          void endTimer(); // Stop the timer
+  12          void Timer0_ISR(void); // A method that detects the interrupts in the timer
+  13          void trainUserX(bit user); // A method that lets a certain user to enter .tie5Ronal five times
+  14          void testingPhase(); // A method that enables any user to enter .tie5Ronal for testing 
+  15          long getEuclideanDistance(bit user); // A method that gets the euclidean difference between a ceratin user
              - and the tested user
-  15          
-  16          unsigned int overFlows = 0; // This is our unit time in the program. It is the difference between a key st
+  16          
+  17          unsigned int overFlows = 0; // This is our unit time in the program. It is the difference between a key st
              -roke and another
-  17          unsigned long xdata avg0[9] ; //store average keystrokes for user 1
-  18          unsigned long xdata avg1[9];//store average keystrokes for user 2
-  19          unsigned long xdata testingTimes[9]; //store testing time of random user
-  20          unsigned char password  [10] = ".tie5Ronal";  //The password the users will enter
-  21          unsigned long euclideanDistance0 = 0 ; // The euclidean distance between user 0 and the random user
-  22          unsigned long euclideanDistance1 = 0 ;// The euclidean distance between user 1 and the random user
-  23          
-  24          sbit switch1 = P0^0; // Switch 1 which indicates whether we are in training(0) or testing(1) Phase
-  25          sbit switch2 = P0^1; // Switch 2 which indicates whether user0(0) or user1(1) is entering the password now
+  18          unsigned long xdata avg0[9] ; //store average keystrokes for user 1
+  19          unsigned long xdata avg1[9];//store average keystrokes for user 2
+  20          unsigned long xdata testingTimes[9]; //store testing time of random user
+  21          unsigned char password  [10] = ".tie5Ronal";  //The password the users will enter
+  22          unsigned long euclideanDistance0 = 0 ; // The euclidean distance between user 0 and the random user
+  23          unsigned long euclideanDistance1 = 0 ;// The euclidean distance between user 1 and the random user
+  24          
+  25          sbit switch1 = P0^0; // Switch 1 which indicates whether we are in training(0) or testing(1) Phase
+  26          sbit switch2 = P0^1; // Switch 2 which indicates whether user0(0) or user1(1) is entering the password now
              - (In Training phase)
-  26          sbit led = P0^2; // The Led which indicates which user is the random user. Lights up 1 time means User 0, 
+  27          sbit led = P0^2; // The Led which indicates which user is the random user. Lights up 1 time means User 0, 
              -2 times means User 1
-  27          
-  28          void main(void){
-  29   1        
-  30   1      
-  31   1        led = 0; // The Led is off at the begining
-  32   1        
-  33   1        // Initialize UART settings 
-  34   1        uart_init();
-  35   1        
-  36   1        uart_msg("Please set the Switch 1 to Train(0) and Switch 2 to User 0 \n");
-  37   1                
-  38   1        while(switch1 != 0 || switch2 != 0); // Wait until the Switch 1 is 0 (Training Phase) and Switch 2 is 0 (
+  28          
+  29          void main(void){
+  30   1        
+  31   1      
+  32   1        led = 0; // The Led is off at the begining
+  33   1        
+  34   1        // Initialize UART settings 
+  35   1        uart_init();
+  36   1        
+  37   1        uart_msg("Set Switch 1 to Train(0) and Switch 2 to User 0 \n");
+  38   1                
+  39   1        while(switch1 != 0 || switch2 != 0); // Wait until the Switch 1 is 0 (Training Phase) and Switch 2 is 0 (
              -User 0)
-  39   1            
-  40   1        uart_msg("Now training User 0 \n");
-  41   1            
-  42   1        trainUserX(0); // Train User 0
-  43   1          
-  44   1        uart_msg("Please set the Switch 1 to Train(0) and Switch 2 to User 1 \n");
-  45   1                
-  46   1        while(switch1 != 0 || switch2 != 1); // Wait until the Switch 1 is 0 (Training Phase) and Switch 2 is 0 (
+  40   1            
+  41   1        uart_msg("Training User 0 \n");
+  42   1            
+  43   1        trainUserX(0); // Train User 0
+  44   1          
+  45   1        uart_msg("Set Switch 1 to Train(0) and Switch 2 to User 1 \n");
+  46   1                
+  47   1        while(switch1 != 0 || switch2 != 1); // Wait until the Switch 1 is 0 (Training Phase) and Switch 2 is 0 (
              -User 1)
-  47   1      
-  48   1        uart_msg("Now training User 1 \n"); 
-C51 COMPILER V9.59.0.0   UART                                                              11/17/2018 20:55:58 PAGE 2   
+  48   1      
+C51 COMPILER V9.59.0.0   UART                                                              11/17/2018 21:54:25 PAGE 2   
 
-  49   1          
-  50   1        trainUserX(1); // Train User 1
-  51   1            
-  52   1        uart_msg("Please set the Switch 1 to Test(1)  \n");
-  53   1      
-  54   1        while(switch1 != 1); // Wait until the Switch 1 is 1 (Testing Phase)
-  55   1        
-  56   1        uart_msg("Now testing \n"); 
-  57   1      
-  58   1        testingPhase(); // Testing random user
-  59   1        
-  60   1        euclideanDistance0 = getEuclideanDistance(0); // Get the Euclidean Distance between User 0 and Testing Us
+  49   1        uart_msg("training User 1 \n"); 
+  50   1          
+  51   1        trainUserX(1); // Train User 1
+  52   1            
+  53   1        uart_msg("Set Switch 1 to Test(1)  \n");
+  54   1      
+  55   1        while(switch1 != 1); // Wait until the Switch 1 is 1 (Testing Phase)
+  56   1        
+  57   1        uart_msg("Testing \n"); 
+  58   1      
+  59   1        testingPhase(); // Testing random user
+  60   1        
+  61   1        euclideanDistance0 = getEuclideanDistance(0); // Get the Euclidean Distance between User 0 and Testing Us
              -er
-  61   1        euclideanDistance1 = getEuclideanDistance(1); // Get the Euclidean Distance between User 1 and Testing Us
+  62   1        euclideanDistance1 = getEuclideanDistance(1); // Get the Euclidean Distance between User 1 and Testing Us
              -er
-  62   1      
-  63   1        if(euclideanDistance1 > euclideanDistance0){ // If Euclidean Distance of User 1 is bigger than User 0 the
+  63   1      
+  64   1        if(euclideanDistance1 > euclideanDistance0){ // If Euclidean Distance of User 1 is bigger than User 0 the
              -n the random user is User 0
-  64   2          uart_msg("You are User 0 \n");
-  65   2      
-  66   2          // TURN THE LED ON ONCE AND THEN OFF //
-  67   2          
-  68   2          led = 1; // Turn the LED On
-  69   2      
-  70   2          startTimer();
-  71   2          while(overFlows < 50); // Wait for 50 overflow units
-  72   2          endTimer();
-  73   2        
-  74   2          led = 0; // Turn The Led Off
-  75   2        
-  76   2        } else if(euclideanDistance1 < euclideanDistance0){ // If Euclidean Distance of User 1 is smaller than Us
+  65   2          uart_msg("You are User 0 \n");
+  66   2      
+  67   2          // TURN THE LED ON ONCE AND THEN OFF //
+  68   2          
+  69   2          led = 1; // Turn the LED On
+  70   2      
+  71   2          startTimer();
+  72   2          while(overFlows < 50); // Wait for 50 overflow units
+  73   2          endTimer();
+  74   2        
+  75   2          led = 0; // Turn The Led Off
+  76   2        
+  77   2        } else if(euclideanDistance1 < euclideanDistance0){ // If Euclidean Distance of User 1 is smaller than Us
              -er 0 then the random user is User 1
-  77   2          uart_msg("You are User 1 \n");
-  78   2        
-  79   2          // TURN THE LED ON AND THEN OFF AND THEN ON AND THEN OFF //
-  80   2          
-  81   2          led = 1; // Turn the LED on
-  82   2          
-  83   2          startTimer();
-  84   2          while(overFlows < 50); // Wait for 50 overflow units
-  85   2          endTimer();
-  86   2          
-  87   2          led = 0; // Turn the LED off
-  88   2          
-  89   2          startTimer();
-  90   2          while(overFlows < 50); // Wait for 50 overflow units
-  91   2          endTimer();
-  92   2          
-  93   2          led = 1; // Turn the LED on
-  94   2          
-  95   2          startTimer();
-  96   2          while(overFlows < 50); // Wait for 50 overflow units
-  97   2          endTimer();
-  98   2          
-  99   2          led = 0; // Turn the LED off
- 100   2          
- 101   2        } else { // If both euclidean distance is the same then we cannot know the random user
- 102   2          uart_msg("I do not know! \n");
- 103   2        }
- 104   1        
- 105   1        while(1);
- 106   1      
-C51 COMPILER V9.59.0.0   UART                                                              11/17/2018 20:55:58 PAGE 3   
+  78   2          uart_msg("You are User 1 \n");
+  79   2        
+  80   2          // TURN THE LED ON AND THEN OFF AND THEN ON AND THEN OFF //
+  81   2          
+  82   2          led = 1; // Turn the LED on
+  83   2          
+  84   2          startTimer();
+  85   2          while(overFlows < 50); // Wait for 50 overflow units
+  86   2          endTimer();
+  87   2          
+  88   2          led = 0; // Turn the LED off
+  89   2          
+  90   2          startTimer();
+  91   2          while(overFlows < 50); // Wait for 50 overflow units
+  92   2          endTimer();
+  93   2          
+  94   2          led = 1; // Turn the LED on
+  95   2          
+  96   2          startTimer();
+  97   2          while(overFlows < 50); // Wait for 50 overflow units
+  98   2          endTimer();
+  99   2          
+ 100   2          led = 0; // Turn the LED off
+ 101   2          
+ 102   2        } else { // If both euclidean distance is the same then we cannot know the random user
+ 103   2          uart_msg("I do not know! \n");
+ 104   2        }
+ 105   1        
+ 106   1        while(1);
+C51 COMPILER V9.59.0.0   UART                                                              11/17/2018 21:54:25 PAGE 3   
 
- 107   1      }
- 108          
- 109          // A method that enables any user to enter .tie5Ronal for testing 
- 110          void trainUserX (bit user){
- 111   1      
- 112   1        unsigned char j;
- 113   1        unsigned char i;
- 114   1        
- 115   1        // First Check That there are no values in avg array by clearing it 
- 116   1        for( i = 0; i<9; i++){
- 117   2          if(!user){
- 118   3            avg0[i] = 0;
- 119   3          } else{
- 120   3            avg1[i] = 0;
- 121   3          }
- 122   2        }
- 123   1        // For each trial and here we have 5 trials
- 124   1        for(j = '0'; j<'5' ; j++){
- 125   2          uart_msg("trial ");
- 126   2          uart_tx(j);
- 127   2          uart_msg("\n");
- 128   2          
- 129   2          wait4Letter(password[0]);
- 130   2                    
- 131   2          // For each letter and we have 10 letters
- 132   2          for( i = 0; i<9;i++){
- 133   3                      
- 134   3            startTimer(); // Let the timer start so we can count the over flows
- 135   3            wait4Letter(password[i+1]); // Wait util the user enters the desired letter
- 136   3            endTimer(); // End timer
- 137   3            // Add all the overflows of every corresponding character in the 5 trials and we will later on divide t
+ 107   1      
+ 108   1      }
+ 109          
+ 110          // A method that enables any user to enter .tie5Ronal for testing 
+ 111          void trainUserX (bit user){
+ 112   1      
+ 113   1        unsigned char j;
+ 114   1        unsigned char i;
+ 115   1        
+ 116   1        // First Check That there are no values in avg array by clearing it 
+ 117   1        for( i = 0; i<9; i++){
+ 118   2          if(!user){
+ 119   3            avg0[i] = 0;
+ 120   3          } else{
+ 121   3            avg1[i] = 0;
+ 122   3          }
+ 123   2        }
+ 124   1        // For each trial and here we have 5 trials
+ 125   1        for(j = '0'; j<'5' ; j++){
+ 126   2          uart_msg("trial ");
+ 127   2          uart_tx(j);
+ 128   2          uart_msg("\n");
+ 129   2          
+ 130   2          wait4Letter(password[0]);
+ 131   2                    
+ 132   2          // For each letter and we have 10 letters
+ 133   2          for( i = 0; i<9;i++){
+ 134   3                      
+ 135   3            startTimer(); // Let the timer start so we can count the over flows
+ 136   3            wait4Letter(password[i+1]); // Wait util the user enters the desired letter
+ 137   3            endTimer(); // End timer
+ 138   3            // Add all the overflows of every corresponding character in the 5 trials and we will later on divide t
              -hem by 5(No of Trials)
- 138   3            if(!user){ 
- 139   4              avg0[i] += overFlows/5;
- 140   4            } else if(user){
- 141   4              avg1[i] += overFlows/5;
- 142   4            }
- 143   3            overFlows = 0; // Reset overFlows to 0
- 144   3              
- 145   3          }
- 146   2            uart_msg("\n");         
- 147   2        }
- 148   1        
- 149   1      }
- 150          
- 151          // A method that enables any user to enter .tie5Ronal for testing 
- 152          void testingPhase(){
- 153   1        
- 154   1        unsigned char i;
- 155   1      
- 156   1        // First Check That there are no values in testing array by clearing it 
- 157   1        for( i = 0; i<9; i++){
- 158   2          testingTimes[i] = 0;
- 159   2        }
- 160   1      
- 161   1        uart_msg("Testing!\n");
- 162   1      
- 163   1        wait4Letter(password[0]);
- 164   1        
- 165   1        // For each letter and we have 5 letters
- 166   1        for( i = 0; i<9;i++){
- 167   2                      
-C51 COMPILER V9.59.0.0   UART                                                              11/17/2018 20:55:58 PAGE 4   
+ 139   3            if(!user){ 
+ 140   4              avg0[i] += ((overFlows * 65536) + (TH0 << 8) + TL0)/5;
+ 141   4              //avg0[i] += overFlows/5;
+ 142   4            } else if(user){
+ 143   4              avg1[i] += ((overFlows * 65536) + (TH0 << 8) + TL0)/5;
+ 144   4              //avg1[i] += overFlows/5;
+ 145   4            }
+ 146   3            overFlows = 0; // Reset overFlows to 0
+ 147   3              
+ 148   3          }
+ 149   2            uart_msg("\n");         
+ 150   2        }
+ 151   1        
+ 152   1      }
+ 153          
+ 154          // A method that enables any user to enter .tie5Ronal for testing 
+ 155          void testingPhase(){
+ 156   1        
+ 157   1        unsigned char i;
+ 158   1      
+ 159   1        // First Check That there are no values in testing array by clearing it 
+ 160   1        for( i = 0; i<9; i++){
+ 161   2          testingTimes[i] = 0;
+ 162   2        }
+ 163   1      
+ 164   1        wait4Letter(password[0]);
+ 165   1        
+ 166   1        // For each letter and we have 5 letters
+ 167   1        for( i = 0; i<9;i++){
+C51 COMPILER V9.59.0.0   UART                                                              11/17/2018 21:54:25 PAGE 4   
 
- 168   2          startTimer(); // Start timers so we can count the overflows
- 169   2          wait4Letter(password[i+1]); // Wait until random user enter the desired letter 
- 170   2          endTimer(); // Stop timer
- 171   2                      
- 172   2          testingTimes[i] += overFlows;
- 173   2                
- 174   2          overFlows = 0;
- 175   2              
- 176   2        }
- 177   1        uart_msg("\n");
- 178   1        
- 179   1      }
- 180          
- 181          // A method that waits until the desired letter is entered 
- 182          void wait4Letter(char x){
- 183   1      
- 184   1        while(1){
- 185   2          char y = uart_rx(); // Get Entered Letter
- 186   2          
- 187   2          // If the entered letter is as the desired letter then return else then keep looping until desired lette
+ 168   2                      
+ 169   2          startTimer(); // Start timers so we can count the overflows
+ 170   2          wait4Letter(password[i+1]); // Wait until random user enter the desired letter 
+ 171   2          endTimer(); // Stop timer
+ 172   2                      
+ 173   2          testingTimes[i] = ((overFlows * 65536) + (TH0 << 8) + TL0);
+ 174   2          
+ 175   2          //testingTimes[i] = overFlows;
+ 176   2          
+ 177   2          overFlows = 0;
+ 178   2              
+ 179   2        }
+ 180   1        uart_msg("\n");
+ 181   1        
+ 182   1      }
+ 183          
+ 184          // A method that waits until the desired letter is entered 
+ 185          void wait4Letter(char x){
+ 186   1      
+ 187   1        while(1){
+ 188   2          char y = uart_rx(); // Get Entered Letter
+ 189   2          
+ 190   2          // If the entered letter is as the desired letter then return else then keep looping until desired lette
              -r is entered
- 188   2          if(y == x){
- 189   3            uart_tx(x);
- 190   3            return;
- 191   3          }
- 192   2          else{
- 193   3      //      uart_msg(" Wrong character ! / ");
+ 191   2          if(y == x){
+ 192   3            uart_tx(x);
+ 193   3            return;
  194   3          }
- 195   2        }
- 196   1      }
- 197          
- 198          // A method that gets the euclidean difference between a ceratin user and the tested user
- 199          long getEuclideanDistance(bit user){
- 200   1        unsigned char i;
- 201   1      
- 202   1        long euclideanDistance = 0;
- 203   1        
- 204   1        for(i=0;i<10;i++){
- 205   2          
- 206   2          if(!user){ // The Euclidean Distance is calculated by squaring the difference between two points
- 207   3              euclideanDistance += (testingTimes[i] - avg0[i])*(testingTimes[i] - avg0[i]);
- 208   3          } else {
- 209   3              euclideanDistance += (testingTimes[i] - avg1[i])*(testingTimes[i] - avg1[i]);
- 210   3          }
- 211   2          
- 212   2        }
- 213   1      
- 214   1        return euclideanDistance;
- 215   1        
- 216   1      }
- 217          
- 218          //String transmission
- 219          void uart_msg(char *p){
+ 195   2          else{
+ 196   3      //      uart_msg(" Wrong character ! / ");
+ 197   3          }
+ 198   2        }
+ 199   1      }
+ 200          
+ 201          // A method that gets the euclidean difference between a ceratin user and the tested user
+ 202          long getEuclideanDistance(bit user){
+ 203   1        unsigned char i;
+ 204   1      
+ 205   1        unsigned long euclideanDistance = 0;
+ 206   1        
+ 207   1        for(i=0;i<9;i++){
+ 208   2          
+ 209   2          if(!user){ // The Euclidean Distance is calculated by squaring the difference between two points
+ 210   3            //euclideanDistance += (testingTimes[i] - avg0[i])*(testingTimes[i] - avg0[i]);
+ 211   3            euclideanDistance += abs(testingTimes[i] - avg0[i]);
+ 212   3          } else {
+ 213   3            //euclideanDistance += (testingTimes[i] - avg1[i]) * (testingTimes[i] - avg1[i]);
+ 214   3            euclideanDistance += abs(testingTimes[i] - avg1[i]);
+ 215   3          }
+ 216   2          
+ 217   2        }
+ 218   1      
+ 219   1        return euclideanDistance;
  220   1        
- 221   1        while(*p != 0){
- 222   2          uart_tx(*p);
- 223   2          p++;
- 224   2        }
+ 221   1      }
+ 222          
+ 223          //String transmission
+ 224          void uart_msg(char *p){
  225   1        
- 226   1        return;
- 227   1        
- 228   1      }
-C51 COMPILER V9.59.0.0   UART                                                              11/17/2018 20:55:58 PAGE 5   
+ 226   1        while(*p != 0){
+ 227   2          uart_tx(*p);
+ 228   2          p++;
+C51 COMPILER V9.59.0.0   UART                                                              11/17/2018 21:54:25 PAGE 5   
 
- 229          
- 230          // Start the timer so the overFlows are calculated by the interrupts
- 231          void startTimer(){
- 232   1        overFlows = 0; // Clearing the overFlows
- 233   1        TH0 = 0x00; // Restarting the timer high bits of timer 0 
- 234   1        TL0 = 0x00; // Restarting the timer low bits of timer 0
- 235   1        TR0 = 1; // Start timer 0
- 236   1        ET0 = 1; // Enable timer 0 interruprs
- 237   1        EA = 1; // Enable Interrupts
- 238   1      }
- 239          
- 240          // Stop the timer
- 241          void endTimer(){
- 242   1        TR0 = 0; // Stop Timer 0 interrupts
- 243   1        ET0 = 0; // Disable Timer 0 interrupts
- 244   1        EA = 0; // Disable Interrupts
- 245   1      }
- 246          
- 247          //Initialize UART
- 248          void uart_init(){
- 249   1         SCON = 0x50;
- 250   1         timer_init();
- 251   1      }
- 252          
- 253          // Timer 2 in mode 2 used for initialization of UART
- 254          void timer_init(){
- 255   1        TMOD = 0x21;
- 256   1        TH1 = 0xFD;
- 257   1        TR1 = 1;
- 258   1      }
- 259          
- 260          //Transmission function
- 261          void uart_tx(char x){
- 262   1        SBUF = x;
- 263   1        
- 264   1        while(!TI);
- 265   1        
- 266   1        TI = 0;
- 267   1      }
- 268          
- 269          //Receiving function
- 270          char uart_rx(){
- 271   1        char x;
- 272   1        //REN = 1;
- 273   1        while(!RI);
- 274   1        x = SBUF;
- 275   1        RI = 0;
- 276   1        return x;
- 277   1      }
- 278          
- 279          // A method that detects the interrupts in the timer
- 280          void Timer0_ISR(void) interrupt 1 {
- 281   1        TR0 = 0;
- 282   1        overFlows ++; // Incerement Overflows
- 283   1        TH0 = 0x00;
- 284   1        TL0 = 0x00;
- 285   1        TF0 = 0;
- 286   1        TR0 = 1;  
- 287   1      }
- 288          
+ 229   2        }
+ 230   1        
+ 231   1        return;
+ 232   1        
+ 233   1      }
+ 234          
+ 235          // Start the timer so the overFlows are calculated by the interrupts
+ 236          void startTimer(){
+ 237   1        overFlows = 0; // Clearing the overFlows
+ 238   1        TH0 = 0x00; // Restarting the timer high bits of timer 0 
+ 239   1        TL0 = 0x00; // Restarting the timer low bits of timer 0
+ 240   1        TR0 = 1; // Start timer 0
+ 241   1        ET0 = 1; // Enable timer 0 interruprs
+ 242   1        EA = 1; // Enable Interrupts
+ 243   1      }
+ 244          
+ 245          // Stop the timer
+ 246          void endTimer(){
+ 247   1        TR0 = 0; // Stop Timer 0 interrupts
+ 248   1        ET0 = 0; // Disable Timer 0 interrupts
+ 249   1        EA = 0; // Disable Interrupts
+ 250   1      }
+ 251          
+ 252          //Initialize UART
+ 253          void uart_init(){
+ 254   1         SCON = 0x50;
+ 255   1         timer_init();
+ 256   1      }
+ 257          
+ 258          // Timer 2 in mode 2 used for initialization of UART
+ 259          void timer_init(){
+ 260   1        TMOD = 0x21;
+ 261   1        TH1 = 0xFD;
+ 262   1        TR1 = 1;
+ 263   1      }
+ 264          
+ 265          //Transmission function
+ 266          void uart_tx(char x){
+ 267   1        SBUF = x;
+ 268   1        
+ 269   1        while(!TI);
+ 270   1        
+ 271   1        TI = 0;
+ 272   1      }
+ 273          
+ 274          //Receiving function
+ 275          char uart_rx(){
+ 276   1        char x;
+ 277   1        //REN = 1;
+ 278   1        while(!RI);
+ 279   1        x = SBUF;
+ 280   1        RI = 0;
+ 281   1        return x;
+ 282   1      }
+ 283          
+ 284          // A method that detects the interrupts in the timer
+ 285          void Timer0_ISR(void) interrupt 1 {
+ 286   1        TR0 = 0;
+ 287   1        overFlows ++; // Incerement Overflows
+ 288   1        TH0 = 0x00;
+ 289   1        TL0 = 0x00;
+ 290   1        TF0 = 0;
+C51 COMPILER V9.59.0.0   UART                                                              11/17/2018 21:54:25 PAGE 6   
 
+ 291   1        TR0 = 1;  
+ 292   1      }
+ 293          
 
-C51 COMPILER V9.59.0.0   UART                                                              11/17/2018 20:55:58 PAGE 6   
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =   1070    ----
-   CONSTANT SIZE    =    288    ----
+   CODE SIZE        =   1007    ----
+   CONSTANT SIZE    =    233    ----
    XDATA SIZE       =    108    ----
    PDATA SIZE       =   ----    ----
    DATA SIZE        =     20      13
