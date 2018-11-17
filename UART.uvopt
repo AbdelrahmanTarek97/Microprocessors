@@ -140,27 +140,27 @@
         <Ww>
           <count>0</count>
           <WinNumber>1</WinNumber>
-          <ItemText>avg0,0x10</ItemText>
+          <ItemText>avg0,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
           <WinNumber>1</WinNumber>
-          <ItemText>avg1,0x10</ItemText>
+          <ItemText>avg1,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>2</count>
           <WinNumber>1</WinNumber>
-          <ItemText>testingTimes,0x10</ItemText>
+          <ItemText>testingTimes,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>3</count>
           <WinNumber>1</WinNumber>
-          <ItemText>euclideanDistance0,0x0A</ItemText>
+          <ItemText>euclideanDistance0,0x10</ItemText>
         </Ww>
         <Ww>
           <count>4</count>
           <WinNumber>1</WinNumber>
-          <ItemText>euclideanDistance1,0x0A</ItemText>
+          <ItemText>euclideanDistance1,0x10</ItemText>
         </Ww>
         <Ww>
           <count>5</count>
@@ -196,6 +196,11 @@
           <count>11</count>
           <WinNumber>1</WinNumber>
           <ItemText>overflows,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>12</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>euclideanDistance0</ItemText>
         </Ww>
       </WatchWindow1>
       <MemoryWindow1>
@@ -239,7 +244,7 @@
         <aLwin>1</aLwin>
         <aCover>0</aCover>
         <aSer1>1</aSer1>
-        <aSer2>1</aSer2>
+        <aSer2>0</aSer2>
         <aPa>0</aPa>
         <viewmode>1</viewmode>
         <vrSel>0</vrSel>

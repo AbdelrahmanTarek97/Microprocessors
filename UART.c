@@ -33,19 +33,19 @@ void main(void){
 	// Initialize UART settings	
 	uart_init();
 	
-	uart_msg("1 Train0, 2 Train1 \n");
+	uart_msg("Please set the Switch 1 to Train(0) and Switch 2 to User 0 \n");
 					
 	while(switch1 != 0 || switch2 != 0); // Wait until the Switch 1 is 0 (Training Phase) and Switch 2 is 0 (User 0)
 			
-	uart_msg("trainingUser0\n");
+	uart_msg("Now training User 0 \n");
 			
 	trainUserX(0); // Train User 0
 		
-	uart_msg("1 Train0,2 Train1 \n");
+	uart_msg("Please set the Switch 1 to Train(0) and Switch 2 to User 1 \n");
 					
 	while(switch1 != 0 || switch2 != 1); // Wait until the Switch 1 is 0 (Training Phase) and Switch 2 is 0 (User 1)
 
-	uart_msg("trainingUser1\n");	
+	uart_msg("Now training User 1 \n");	
 		
 	trainUserX(1); // Train User 1
 			
@@ -53,7 +53,7 @@ void main(void){
 
 	while(switch1 != 1); // Wait until the Switch 1 is 1 (Testing Phase)
 	
-	uart_msg("Nowtesting\n");	
+	uart_msg("Now testing \n");	
 
 	testingPhase(); // Testing random user
 	
@@ -61,7 +61,7 @@ void main(void){
 	euclideanDistance1 = getEuclideanDistance(1); // Get the Euclidean Distance between User 1 and Testing User
 
 	if(euclideanDistance1 > euclideanDistance0){ // If Euclidean Distance of User 1 is bigger than User 0 then the random user is User 0
-		uart_msg("User0! \n");
+		uart_msg("You are User 0 \n");
 
 		// TURN THE LED ON ONCE AND THEN OFF //
 		
@@ -74,7 +74,7 @@ void main(void){
 		led = 0; // Turn The Led Off
 	
 	} else if(euclideanDistance1 < euclideanDistance0){ // If Euclidean Distance of User 1 is smaller than User 0 then the random user is User 1
-		uart_msg("User1! \n");
+		uart_msg("You are User 1 \n");
 	
 		// TURN THE LED ON AND THEN OFF AND THEN ON AND THEN OFF //
 		
@@ -99,8 +99,10 @@ void main(void){
 		led = 0; // Turn the LED off
 		
 	} else { // If both euclidean distance is the same then we cannot know the random user
-		uart_msg("tie \n");
+		uart_msg("I do not know! \n");
 	}
+	
+	while(1);
 
 }
 
@@ -120,7 +122,7 @@ void trainUserX (bit user){
 	}
 	// For each trial and here we have 5 trials
 	for(j = '0'; j<'5' ; j++){
-		uart_msg("trial");
+		uart_msg("trial ");
 		uart_tx(j);
 		uart_msg("\n");
 		
@@ -134,9 +136,9 @@ void trainUserX (bit user){
 			endTimer(); // End timer
 			// Add all the overflows of every corresponding character in the 5 trials and we will later on divide them by 5(No of Trials)
 			if(!user){ 
-				avg0[i] += ((overFlows << 16) | (TH0 << 8) | TL0)/5;
+				avg0[i] += overFlows/5;
 			} else if(user){
-				avg1[i] += ((overFlows << 16) | (TH0 << 8) | TL0)/5;
+				avg1[i] += overFlows/5;
 			}
 			overFlows = 0; // Reset overFlows to 0
 				
@@ -160,8 +162,6 @@ void testingPhase(){
 
 	wait4Letter(password[0]);
 	
-	overFlows = 0;
-
 	// For each letter and we have 5 letters
 	for( i = 0; i<9;i++){
 								
@@ -169,7 +169,7 @@ void testingPhase(){
 		wait4Letter(password[i+1]); // Wait until random user enter the desired letter 
 		endTimer(); // Stop timer
 								
-		testingTimes[i] += (overFlows * 65536) + (TH0 << 8) + TL0;
+		testingTimes[i] += overFlows;
 					
 		overFlows = 0;
 				
