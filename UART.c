@@ -14,7 +14,7 @@ void trainUserX(bit user); // A method that lets a certain user to enter .tie5Ro
 void testingPhase(); // A method that enables any user to enter .tie5Ronal for testing 
 long getEuclideanDistance(bit user); // A method that gets the euclidean difference between a ceratin user and the tested user
 
-unsigned int overFlows = 0; // This is our unit time in the program. It is the difference between a key stroke and another
+unsigned overFlows = 0; // This is our unit time in the program. It is the difference between a key stroke and another
 unsigned long xdata avg0[9] ; //store average keystrokes for user 1
 unsigned long xdata avg1[9];//store average keystrokes for user 2
 unsigned long xdata testingTimes[9]; //store testing time of random user
@@ -54,56 +54,59 @@ void main(void){
 
 	while(switch1 != 1); // Wait until the Switch 1 is 1 (Testing Phase)
 	
-	uart_msg("Testing \n");	
-
-	testingPhase(); // Testing random user
 	
-	euclideanDistance0 = getEuclideanDistance(0); // Get the Euclidean Distance between User 0 and Testing User
-	euclideanDistance1 = getEuclideanDistance(1); // Get the Euclidean Distance between User 1 and Testing User
+	while(1)
+	{
+		uart_msg("Testing, Enter the password \n");	
+		
+		testingPhase(); // Testing random user
+		
+		euclideanDistance0 = getEuclideanDistance(0); // Get the Euclidean Distance between User 0 and Testing User
+		euclideanDistance1 = getEuclideanDistance(1); // Get the Euclidean Distance between User 1 and Testing User
 
-	if(euclideanDistance1 > euclideanDistance0){ // If Euclidean Distance of User 1 is bigger than User 0 then the random user is User 0
-		uart_msg("You are User 0 \n");
+		if(euclideanDistance1 > euclideanDistance0){ // If Euclidean Distance of User 1 is bigger than User 0 then the random user is User 0
+			uart_msg("You are User 0 \n");
 
-		// TURN THE LED ON ONCE AND THEN OFF //
-		
-		led = 1; // Turn the LED On
+			// TURN THE LED ON ONCE AND THEN OFF //
+			
+			led = 1; // Turn the LED On
 
-		startTimer();
-		while(overFlows < 50); // Wait for 50 overflow units
-		endTimer();
+			startTimer();
+			while(overFlows < 50); // Wait for 50 overflow units
+			endTimer();
+		
+			led = 0; // Turn The Led Off
+		
+		} else if(euclideanDistance1 < euclideanDistance0){ // If Euclidean Distance of User 1 is smaller than User 0 then the random user is User 1
+			uart_msg("You are User 1 \n");
+		
+			// TURN THE LED ON AND THEN OFF AND THEN ON AND THEN OFF //
+			
+			led = 1; // Turn the LED on
+			
+			startTimer();
+			while(overFlows < 50); // Wait for 50 overflow units
+			endTimer();
+			
+			led = 0; // Turn the LED off
+			
+			startTimer();
+			while(overFlows < 50); // Wait for 50 overflow units
+			endTimer();
+			
+			led = 1; // Turn the LED on
+			
+			startTimer();
+			while(overFlows < 50); // Wait for 50 overflow units
+			endTimer();
+			
+			led = 0; // Turn the LED off
+			
+		} else { // If both euclidean distance is the same then we cannot know the random user
+			uart_msg("I do not know! \n");
+		}
 	
-		led = 0; // Turn The Led Off
-	
-	} else if(euclideanDistance1 < euclideanDistance0){ // If Euclidean Distance of User 1 is smaller than User 0 then the random user is User 1
-		uart_msg("You are User 1 \n");
-	
-		// TURN THE LED ON AND THEN OFF AND THEN ON AND THEN OFF //
-		
-		led = 1; // Turn the LED on
-		
-		startTimer();
-		while(overFlows < 50); // Wait for 50 overflow units
-		endTimer();
-		
-		led = 0; // Turn the LED off
-		
-		startTimer();
-		while(overFlows < 50); // Wait for 50 overflow units
-		endTimer();
-		
-		led = 1; // Turn the LED on
-		
-		startTimer();
-		while(overFlows < 50); // Wait for 50 overflow units
-		endTimer();
-		
-		led = 0; // Turn the LED off
-		
-	} else { // If both euclidean distance is the same then we cannot know the random user
-		uart_msg("I do not know! \n");
 	}
-	
-	while(1);
 
 }
 
@@ -137,10 +140,10 @@ void trainUserX (bit user){
 			endTimer(); // End timer
 			// Add all the overflows of every corresponding character in the 5 trials and we will later on divide them by 5(No of Trials)
 			if(!user){ 
-				avg0[i] += ((overFlows * 65536) + (TH0 << 8) + TL0)/5;
+				avg0[i] += (unsigned long)((((unsigned long)overFlows) << 16) | (((unsigned long)TH0) << 8) | ((unsigned long)TL0))/5;
 				//avg0[i] += overFlows/5;
 			} else if(user){
-				avg1[i] += ((overFlows * 65536) + (TH0 << 8) + TL0)/5;
+				avg1[i] += (unsigned long)((((unsigned long)overFlows) << 16) | (((unsigned long)TH0) << 8) | ((unsigned long)TL0))/5;
 				//avg1[i] += overFlows/5;
 			}
 			overFlows = 0; // Reset overFlows to 0
@@ -170,7 +173,7 @@ void testingPhase(){
 		wait4Letter(password[i+1]); // Wait until random user enter the desired letter 
 		endTimer(); // Stop timer
 								
-		testingTimes[i] = ((overFlows * 65536) + (TH0 << 8) + TL0);
+		testingTimes[i] = (unsigned long)((((unsigned long)overFlows) << 16) | (((unsigned long)TH0) << 8) | ((unsigned long)TL0));
 		
 		//testingTimes[i] = overFlows;
 		
