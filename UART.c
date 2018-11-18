@@ -12,11 +12,11 @@ void endTimer(); // Stop the timer
 void Timer0_ISR(void); // A method that detects the interrupts in the timer
 void trainUserX(bit user); // A method that lets a certain user to enter .tie5Ronal five times
 void testingPhase(); // A method that enables any user to enter .tie5Ronal for testing 
-long getEuclideanDistance(bit user); // A method that gets the euclidean difference between a ceratin user and the tested user
+unsigned long getEuclideanDistance(bit user); // A method that gets the euclidean difference between a ceratin user and the tested user
 
 unsigned overFlows = 0; // This is our unit time in the program. It is the difference between a key stroke and another
-unsigned long xdata avg0[9] ; //store average keystrokes for user 1
-unsigned long xdata avg1[9];//store average keystrokes for user 2
+unsigned long xdata avg0[9] ; //store average keystrokes for user 0
+unsigned long xdata avg1[9];//store average keystrokes for user 1
 unsigned long xdata testingTimes[9]; //store testing time of random user
 unsigned char password  [10] = ".tie5Ronal";  //The password the users will enter
 unsigned long euclideanDistance0 = 0 ; // The euclidean distance between user 0 and the random user
@@ -105,9 +105,11 @@ void main(void){
 		} else { // If both euclidean distance is the same then we cannot know the random user
 			uart_msg("I do not know! \n");
 		}
-	
+			
 	}
 
+	//	while(1);
+		
 }
 
 // A method that enables any user to enter .tie5Ronal for testing 
@@ -130,9 +132,9 @@ void trainUserX (bit user){
 		uart_tx(j);
 		uart_msg("\n");
 		
-		wait4Letter(password[0]);
+		wait4Letter(password[0]); // Wait for '.'
 							
-		// For each letter and we have 10 letters
+		// For each letter and we have 9 letters
 		for( i = 0; i<9;i++){
 								
 			startTimer(); // Let the timer start so we can count the over flows
@@ -140,10 +142,10 @@ void trainUserX (bit user){
 			endTimer(); // End timer
 			// Add all the overflows of every corresponding character in the 5 trials and we will later on divide them by 5(No of Trials)
 			if(!user){ 
-				avg0[i] += (unsigned long)((((unsigned long)overFlows) << 16) | (((unsigned long)TH0) << 8) | ((unsigned long)TL0))/5;
+				avg0[i] += (unsigned long)((((unsigned long)overFlows) << 16 ) + (((unsigned long)TH0) << 8) + ((unsigned long)TL0))/5;
 				//avg0[i] += overFlows/5;
 			} else if(user){
-				avg1[i] += (unsigned long)((((unsigned long)overFlows) << 16) | (((unsigned long)TH0) << 8) | ((unsigned long)TL0))/5;
+				avg1[i] += (unsigned long)((((unsigned long)overFlows) << 16) + (((unsigned long)TH0) << 8) + ((unsigned long)TL0))/5;
 				//avg1[i] += overFlows/5;
 			}
 			overFlows = 0; // Reset overFlows to 0
@@ -164,16 +166,16 @@ void testingPhase(){
 		testingTimes[i] = 0;
 	}
 
-	wait4Letter(password[0]);
+	wait4Letter(password[0]); // Wait for '.'
 	
-	// For each letter and we have 5 letters
+	// For each letter and we have 9 letters
 	for( i = 0; i<9;i++){
 								
 		startTimer(); // Start timers so we can count the overflows
 		wait4Letter(password[i+1]); // Wait until random user enter the desired letter 
 		endTimer(); // Stop timer
 								
-		testingTimes[i] = (unsigned long)((((unsigned long)overFlows) << 16) | (((unsigned long)TH0) << 8) | ((unsigned long)TL0));
+		testingTimes[i] = (unsigned long)((((unsigned long)overFlows) << 16 ) + (((unsigned long)TH0) << 8) + ((unsigned long)TL0));
 		
 		//testingTimes[i] = overFlows;
 		
@@ -202,7 +204,7 @@ void wait4Letter(char x){
 }
 
 // A method that gets the euclidean difference between a ceratin user and the tested user
-long getEuclideanDistance(bit user){
+unsigned long getEuclideanDistance(bit user){
 	unsigned char i;
 
 	unsigned long euclideanDistance = 0;
@@ -211,10 +213,10 @@ long getEuclideanDistance(bit user){
 		
 		if(!user){ // The Euclidean Distance is calculated by squaring the difference between two points
 			//euclideanDistance += (testingTimes[i] - avg0[i])*(testingTimes[i] - avg0[i]);
-			euclideanDistance += abs(testingTimes[i] - avg0[i]);
+			euclideanDistance += (testingTimes[i]>avg0[i])? (testingTimes[i] - avg0[i]) : (avg0[i] - testingTimes[i]) ;
 		} else {
 			//euclideanDistance += (testingTimes[i] - avg1[i]) * (testingTimes[i] - avg1[i]);
-			euclideanDistance += abs(testingTimes[i] - avg1[i]);
+			euclideanDistance += (testingTimes[i]>avg1[i])? (testingTimes[i] - avg1[i]) : (avg1[i] - testingTimes[i]) ;
 		}
 		
 	}

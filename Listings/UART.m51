@@ -1,4 +1,4 @@
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                    11/17/2018  22:52:16  PAGE 1
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                    11/18/2018  13:45:02  PAGE 1
 
 
 BL51 BANKED LINKER/LOCATER V6.22.2.0, INVOKED BY:
@@ -18,7 +18,6 @@ INPUT MODULES INCLUDED:
   C:\KEIL_V5\C51\LIB\C51S.LIB (?C?LSHL)
   C:\KEIL_V5\C51\LIB\C51S.LIB (?C?LSTXDATA)
   C:\KEIL_V5\C51\LIB\C51S.LIB (?C?LSTKXDATA)
-  C:\KEIL_V5\C51\LIB\C51S.LIB (ABS)
 
 
 LINK MAP OF MODULE:  .\Objects\UART (?C_STARTUP)
@@ -44,27 +43,26 @@ LINK MAP OF MODULE:  .\Objects\UART (?C_STARTUP)
                     0003H     0008H                  *** GAP ***
             CODE    000BH     0003H     ABSOLUTE     
                     000EH     07F2H                  *** GAP ***
-            CODE    0800H     0148H     UNIT         ?C?LIB_CODE
-            CODE    0948H     0128H     UNIT         ?PR?TRAINUSERX?UART
-            CODE    0A70H     010BH     UNIT         ?PR?MAIN?UART
-            CODE    0B7BH     00FDH     UNIT         ?CO?UART
-            CODE    0C78H     00ADH     UNIT         ?PR?TESTINGPHASE?UART
-            CODE    0D25H     008CH     UNIT         ?C_C51STARTUP
-            CODE    0DB1H     007FH     UNIT         ?PR?GETEUCLIDEANDISTANCE?UART
-            CODE    0E30H     002EH     UNIT         ?PR?_UART_MSG?UART
-            CODE    0E5EH     001DH     UNIT         ?C_INITSEG
-            CODE    0E7BH     0019H     UNIT         ?PR?TIMER0_ISR?UART
-            CODE    0E94H     0011H     UNIT         ?PR?_WAIT4LETTER?UART
-            CODE    0EA5H     0010H     UNIT         ?PR?STARTTIMER?UART
-            CODE    0EB5H     000CH     UNIT         ?PR?_ABS?ABS
-            CODE    0EC1H     0009H     UNIT         ?PR?TIMER_INIT?UART
-            CODE    0ECAH     0008H     UNIT         ?PR?_UART_TX?UART
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  11/17/2018  22:52:16  PAGE 2
+            CODE    0800H     0184H     UNIT         ?PR?GETEUCLIDEANDISTANCE?UART
+            CODE    0984H     0148H     UNIT         ?C?LIB_CODE
+            CODE    0ACCH     012FH     UNIT         ?PR?TRAINUSERX?UART
+            CODE    0BFBH     010BH     UNIT         ?PR?MAIN?UART
+            CODE    0D06H     00FDH     UNIT         ?CO?UART
+            CODE    0E03H     00B4H     UNIT         ?PR?TESTINGPHASE?UART
+            CODE    0EB7H     008CH     UNIT         ?C_C51STARTUP
+            CODE    0F43H     002EH     UNIT         ?PR?_UART_MSG?UART
+            CODE    0F71H     001DH     UNIT         ?C_INITSEG
+            CODE    0F8EH     0019H     UNIT         ?PR?TIMER0_ISR?UART
+            CODE    0FA7H     0011H     UNIT         ?PR?_WAIT4LETTER?UART
+            CODE    0FB8H     0010H     UNIT         ?PR?STARTTIMER?UART
+            CODE    0FC8H     0009H     UNIT         ?PR?TIMER_INIT?UART
+            CODE    0FD1H     0008H     UNIT         ?PR?_UART_TX?UART
+            CODE    0FD9H     0008H     UNIT         ?PR?UART_RX?UART
+            CODE    0FE1H     0007H     UNIT         ?PR?ENDTIMER?UART
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  11/18/2018  13:45:02  PAGE 2
 
 
-            CODE    0ED2H     0008H     UNIT         ?PR?UART_RX?UART
-            CODE    0EDAH     0007H     UNIT         ?PR?ENDTIMER?UART
-            CODE    0EE1H     0006H     UNIT         ?PR?UART_INIT?UART
+            CODE    0FE8H     0006H     UNIT         ?PR?UART_INIT?UART
 
 
 
@@ -115,20 +113,19 @@ SEGMENT                                  BIT_GROUP          DATA_GROUP
   +--> ?PR?_UART_MSG?UART
 
 ?PR?GETEUCLIDEANDISTANCE?UART         0020H.0  0000H.1    0021H    0005H
-  +--> ?PR?_ABS?ABS
 
-
-
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  11/17/2018  22:52:16  PAGE 3
 
 
 SYMBOL TABLE OF MODULE:  .\Objects\UART (?C_STARTUP)
 
   VALUE           TYPE          NAME
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  11/18/2018  13:45:02  PAGE 3
+
+
   ----------------------------------
 
   -------         MODULE        ?C_STARTUP
-  C:0D25H         SEGMENT       ?C_C51STARTUP
+  C:0EB7H         SEGMENT       ?C_C51STARTUP
   I:0026H         SEGMENT       ?STACK
   C:0000H         PUBLIC        ?C_STARTUP
   D:00E0H         SYMBOL        ACC
@@ -138,7 +135,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\UART (?C_STARTUP)
   N:0000H         SYMBOL        IBPSTACK
   N:0100H         SYMBOL        IBPSTACKTOP
   N:0080H         SYMBOL        IDATALEN
-  C:0D28H         SYMBOL        IDATALOOP
+  C:0EBAH         SYMBOL        IDATALOOP
   N:0000H         SYMBOL        PBPSTACK
   N:0100H         SYMBOL        PBPSTACKTOP
   N:0000H         SYMBOL        PDATALEN
@@ -147,45 +144,45 @@ SYMBOL TABLE OF MODULE:  .\Objects\UART (?C_STARTUP)
   N:0000H         SYMBOL        PPAGEENABLE
   D:00A0H         SYMBOL        PPAGE_SFR
   D:0081H         SYMBOL        SP
-  C:0D25H         SYMBOL        STARTUP1
+  C:0EB7H         SYMBOL        STARTUP1
   N:0000H         SYMBOL        XBPSTACK
   N:0000H         SYMBOL        XBPSTACKTOP
   N:0000H         SYMBOL        XDATALEN
   N:0000H         SYMBOL        XDATASTART
   C:0000H         LINE#         126
-  C:0D25H         LINE#         133
-  C:0D27H         LINE#         134
-  C:0D28H         LINE#         135
-  C:0D29H         LINE#         136
-  C:0D2BH         LINE#         185
-  C:0D2EH         LINE#         196
+  C:0EB7H         LINE#         133
+  C:0EB9H         LINE#         134
+  C:0EBAH         LINE#         135
+  C:0EBBH         LINE#         136
+  C:0EBDH         LINE#         185
+  C:0EC0H         LINE#         196
   -------         ENDMOD        ?C_STARTUP
 
   -------         MODULE        UART
   C:0000H         SYMBOL        _ICE_DUMMY_
   D:0080H         PUBLIC        P0
-  C:0DB1H         PUBLIC        getEuclideanDistance
-  C:0E7BH         PUBLIC        Timer0_ISR
+  C:0800H         PUBLIC        getEuclideanDistance
+  C:0F8EH         PUBLIC        Timer0_ISR
   B:00A8H.7       PUBLIC        EA
   X:0000H         PUBLIC        testingTimes
-  C:0ED2H         PUBLIC        uart_rx
-  C:0ECAH         PUBLIC        _uart_tx
+  C:0FD9H         PUBLIC        uart_rx
+  C:0FD1H         PUBLIC        _uart_tx
   D:0008H         PUBLIC        euclideanDistance0
   D:000CH         PUBLIC        euclideanDistance1
   B:0098H.0       PUBLIC        RI
-  C:0948H         PUBLIC        trainUserX
+  C:0ACCH         PUBLIC        trainUserX
   B:0098H.1       PUBLIC        TI
-  C:0A70H         PUBLIC        main
+  C:0BFBH         PUBLIC        main
   D:0099H         PUBLIC        SBUF
   D:0098H         PUBLIC        SCON
   D:0089H         PUBLIC        TMOD
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  11/17/2018  22:52:16  PAGE 4
-
-
   B:0080H.2       PUBLIC        led
-  C:0EA5H         PUBLIC        startTimer
-  C:0EC1H         PUBLIC        timer_init
-  C:0EDAH         PUBLIC        endTimer
+  C:0FB8H         PUBLIC        startTimer
+  C:0FC8H         PUBLIC        timer_init
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  11/18/2018  13:45:02  PAGE 4
+
+
+  C:0FE1H         PUBLIC        endTimer
   B:0080H.0       PUBLIC        switch1
   B:0080H.1       PUBLIC        switch2
   B:00A8H.1       PUBLIC        ET0
@@ -194,64 +191,64 @@ SYMBOL TABLE OF MODULE:  .\Objects\UART (?C_STARTUP)
   D:0010H         PUBLIC        overFlows
   D:008DH         PUBLIC        TH1
   D:008AH         PUBLIC        TL0
-  C:0EE1H         PUBLIC        uart_init
+  C:0FE8H         PUBLIC        uart_init
   B:0088H.4       PUBLIC        TR0
   B:0088H.6       PUBLIC        TR1
-  C:0E94H         PUBLIC        _wait4Letter
-  C:0E36H         PUBLIC        _uart_msg
+  C:0FA7H         PUBLIC        _wait4Letter
+  C:0F49H         PUBLIC        _uart_msg
   X:0024H         PUBLIC        avg0
   X:0048H         PUBLIC        avg1
-  C:0C78H         PUBLIC        testingPhase
+  C:0E03H         PUBLIC        testingPhase
   D:0012H         PUBLIC        password
   -------         PROC          MAIN
-  C:0A70H         LINE#         29
-  C:0A70H         LINE#         32
-  C:0A72H         LINE#         35
-  C:0A75H         LINE#         37
-  C:0A7EH         LINE#         39
-  C:0A84H         LINE#         41
-  C:0A8DH         LINE#         43
-  C:0A92H         LINE#         45
-  C:0A9BH         LINE#         47
-  C:0AA1H         LINE#         49
-  C:0AAAH         LINE#         51
-  C:0AAFH         LINE#         53
-  C:0AB8H         LINE#         55
-  C:0ABBH         LINE#         58
-  C:0ABBH         LINE#         59
-  C:0ABBH         LINE#         60
-  C:0AC4H         LINE#         62
-  C:0AC7H         LINE#         64
-  C:0AD4H         LINE#         65
-  C:0AE1H         LINE#         67
-  C:0AF7H         LINE#         68
-  C:0B00H         LINE#         72
-  C:0B02H         LINE#         74
-  C:0B05H         LINE#         75
-  C:0B10H         LINE#         76
-  C:0B10H         LINE#         78
-  C:0B10H         LINE#         80
-  C:0B28H         LINE#         81
-  C:0B31H         LINE#         85
-  C:0B33H         LINE#         87
-  C:0B36H         LINE#         88
-  C:0B41H         LINE#         89
-  C:0B44H         LINE#         91
-  C:0B46H         LINE#         93
-  C:0B49H         LINE#         94
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  11/17/2018  22:52:16  PAGE 5
+  C:0BFBH         LINE#         29
+  C:0BFBH         LINE#         32
+  C:0BFDH         LINE#         35
+  C:0C00H         LINE#         37
+  C:0C09H         LINE#         39
+  C:0C0FH         LINE#         41
+  C:0C18H         LINE#         43
+  C:0C1DH         LINE#         45
+  C:0C26H         LINE#         47
+  C:0C2CH         LINE#         49
+  C:0C35H         LINE#         51
+  C:0C3AH         LINE#         53
+  C:0C43H         LINE#         55
+  C:0C46H         LINE#         58
+  C:0C46H         LINE#         59
+  C:0C46H         LINE#         60
+  C:0C4FH         LINE#         62
+  C:0C52H         LINE#         64
+  C:0C5FH         LINE#         65
+  C:0C6CH         LINE#         67
+  C:0C82H         LINE#         68
+  C:0C8BH         LINE#         72
+  C:0C8DH         LINE#         74
+  C:0C90H         LINE#         75
+  C:0C9BH         LINE#         76
+  C:0C9BH         LINE#         78
+  C:0C9BH         LINE#         80
+  C:0CB3H         LINE#         81
+  C:0CBCH         LINE#         85
+  C:0CBEH         LINE#         87
+  C:0CC1H         LINE#         88
+  C:0CCCH         LINE#         89
+  C:0CCFH         LINE#         91
+  C:0CD1H         LINE#         93
+  C:0CD4H         LINE#         94
+  C:0CDFH         LINE#         95
+  C:0CE2H         LINE#         97
+  C:0CE4H         LINE#         99
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  11/18/2018  13:45:02  PAGE 5
 
 
-  C:0B54H         LINE#         95
-  C:0B57H         LINE#         97
-  C:0B59H         LINE#         99
-  C:0B5CH         LINE#         100
-  C:0B67H         LINE#         101
-  C:0B6AH         LINE#         103
-  C:0B6CH         LINE#         105
-  C:0B6FH         LINE#         106
-  C:0B78H         LINE#         107
-  C:0B78H         LINE#         109
+  C:0CE7H         LINE#         100
+  C:0CF2H         LINE#         101
+  C:0CF5H         LINE#         103
+  C:0CF7H         LINE#         105
+  C:0CFAH         LINE#         106
+  C:0D03H         LINE#         107
+  C:0D03H         LINE#         109
   -------         ENDPROC       MAIN
   -------         PROC          TRAINUSERX
   B:0020H.0       SYMBOL        user
@@ -259,65 +256,65 @@ SYMBOL TABLE OF MODULE:  .\Objects\UART (?C_STARTUP)
   D:0021H         SYMBOL        j
   D:0022H         SYMBOL        i
   -------         ENDDO         
-  C:0948H         LINE#         114
-  C:0948H         LINE#         120
-  C:0956H         LINE#         121
-  C:095FH         LINE#         122
-  C:0966H         LINE#         123
-  C:0968H         LINE#         124
-  C:0978H         LINE#         125
-  C:0978H         LINE#         126
-  C:097CH         LINE#         128
-  C:097FH         LINE#         129
-  C:0988H         LINE#         130
-  C:098DH         LINE#         131
-  C:0990H         LINE#         133
-  C:0995H         LINE#         136
-  C:09A6H         LINE#         138
-  C:09A9H         LINE#         139
-  C:09B3H         LINE#         140
-  C:09B6H         LINE#         142
-  C:09B9H         LINE#         143
-  C:09C6H         LINE#         145
-  C:09CEH         LINE#         146
-  C:0A56H         LINE#         148
-  C:0A56H         LINE#         149
-  C:0A5BH         LINE#         151
-  C:0A60H         LINE#         152
-  C:0A63H         LINE#         153
-  C:0A6FH         LINE#         155
+  C:0ACCH         LINE#         116
+  C:0ACCH         LINE#         122
+  C:0ADAH         LINE#         123
+  C:0AE3H         LINE#         124
+  C:0AEAH         LINE#         125
+  C:0AECH         LINE#         126
+  C:0AFCH         LINE#         127
+  C:0AFCH         LINE#         128
+  C:0B00H         LINE#         130
+  C:0B03H         LINE#         131
+  C:0B0CH         LINE#         132
+  C:0B11H         LINE#         133
+  C:0B14H         LINE#         135
+  C:0B19H         LINE#         138
+  C:0B2AH         LINE#         140
+  C:0B2DH         LINE#         141
+  C:0B37H         LINE#         142
+  C:0B3AH         LINE#         144
+  C:0B3DH         LINE#         145
+  C:0B4AH         LINE#         147
+  C:0B52H         LINE#         148
+  C:0BE1H         LINE#         150
+  C:0BE1H         LINE#         151
+  C:0BE6H         LINE#         153
+  C:0BEBH         LINE#         154
+  C:0BEEH         LINE#         155
+  C:0BFAH         LINE#         157
   -------         ENDPROC       TRAINUSERX
   -------         PROC          TESTINGPHASE
   -------         DO            
   D:0021H         SYMBOL        i
   -------         ENDDO         
-  C:0C78H         LINE#         158
-  C:0C78H         LINE#         163
-  C:0C86H         LINE#         164
-  C:0C9CH         LINE#         165
-  C:0CA0H         LINE#         167
-  C:0CA5H         LINE#         170
-  C:0CB3H         LINE#         172
-  C:0CB6H         LINE#         173
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  11/17/2018  22:52:16  PAGE 6
+  C:0E03H         LINE#         160
+  C:0E03H         LINE#         165
+  C:0E11H         LINE#         166
+  C:0E27H         LINE#         167
+  C:0E2BH         LINE#         169
+  C:0E30H         LINE#         172
+  C:0E3EH         LINE#         174
+  C:0E41H         LINE#         175
+  C:0E4BH         LINE#         176
+  C:0E4EH         LINE#         178
+  C:0EA5H         LINE#         182
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  11/18/2018  13:45:02  PAGE 6
 
 
-  C:0CC0H         LINE#         174
-  C:0CC3H         LINE#         176
-  C:0D13H         LINE#         180
-  C:0D18H         LINE#         182
-  C:0D1CH         LINE#         183
+  C:0EAAH         LINE#         184
+  C:0EAEH         LINE#         185
   -------         ENDPROC       TESTINGPHASE
   -------         PROC          _WAIT4LETTER
   D:0023H         SYMBOL        x
   -------         DO            
   D:0024H         SYMBOL        y
   -------         ENDDO         
-  C:0E94H         LINE#         188
-  C:0E96H         LINE#         190
-  C:0E96H         LINE#         191
-  C:0E9BH         LINE#         194
-  C:0EA0H         LINE#         195
+  C:0FA7H         LINE#         190
+  C:0FA9H         LINE#         192
+  C:0FA9H         LINE#         193
+  C:0FAEH         LINE#         196
+  C:0FB3H         LINE#         197
   -------         ENDPROC       _WAIT4LETTER
   -------         PROC          GETEUCLIDEANDISTANCE
   B:0020H.0       SYMBOL        user
@@ -325,126 +322,122 @@ SYMBOL TABLE OF MODULE:  .\Objects\UART (?C_STARTUP)
   D:0021H         SYMBOL        i
   D:0022H         SYMBOL        euclideanDistance
   -------         ENDDO         
-  C:0DB1H         LINE#         205
-  C:0DB1H         LINE#         208
-  C:0DBAH         LINE#         210
-  C:0DC7H         LINE#         212
-  C:0DD0H         LINE#         214
-  C:0DD7H         LINE#         215
-  C:0DD9H         LINE#         217
-  C:0E23H         LINE#         218
-  C:0E23H         LINE#         220
-  C:0E27H         LINE#         222
-  C:0E2FH         LINE#         224
+  C:0800H         LINE#         207
+  C:0800H         LINE#         210
+  C:0809H         LINE#         212
+  C:0819H         LINE#         214
+  C:081FH         LINE#         216
+  C:08BFH         LINE#         217
+  C:08C2H         LINE#         219
+  C:0976H         LINE#         220
+  C:0976H         LINE#         222
+  C:097BH         LINE#         224
+  C:0983H         LINE#         226
   -------         ENDPROC       GETEUCLIDEANDISTANCE
-  -------         PROC          L?0076
-  -------         ENDPROC       L?0076
+  -------         PROC          L?0082
+  -------         ENDPROC       L?0082
   -------         PROC          _UART_MSG
   D:0023H         SYMBOL        p
-  C:0E36H         LINE#         227
-  C:0E3CH         LINE#         229
-  C:0E4DH         LINE#         230
-  C:0E50H         LINE#         231
-  C:0E5BH         LINE#         232
-  C:0E5DH         LINE#         236
+  C:0F49H         LINE#         229
+  C:0F4FH         LINE#         231
+  C:0F60H         LINE#         232
+  C:0F63H         LINE#         233
+  C:0F6EH         LINE#         234
+  C:0F70H         LINE#         238
   -------         ENDPROC       _UART_MSG
   -------         PROC          STARTTIMER
-  C:0EA5H         LINE#         239
-  C:0EA5H         LINE#         240
-  C:0EAAH         LINE#         241
-  C:0EACH         LINE#         242
-  C:0EAEH         LINE#         243
-  C:0EB0H         LINE#         244
-  C:0EB2H         LINE#         245
-  C:0EB4H         LINE#         246
+  C:0FB8H         LINE#         241
+  C:0FB8H         LINE#         242
+  C:0FBDH         LINE#         243
+  C:0FBFH         LINE#         244
+  C:0FC1H         LINE#         245
+  C:0FC3H         LINE#         246
+  C:0FC5H         LINE#         247
+  C:0FC7H         LINE#         248
   -------         ENDPROC       STARTTIMER
   -------         PROC          ENDTIMER
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  11/17/2018  22:52:16  PAGE 7
+  C:0FE1H         LINE#         251
+  C:0FE1H         LINE#         252
+  C:0FE3H         LINE#         253
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  11/18/2018  13:45:02  PAGE 7
 
 
-  C:0EDAH         LINE#         249
-  C:0EDAH         LINE#         250
-  C:0EDCH         LINE#         251
-  C:0EDEH         LINE#         252
-  C:0EE0H         LINE#         253
+  C:0FE5H         LINE#         254
+  C:0FE7H         LINE#         255
   -------         ENDPROC       ENDTIMER
   -------         PROC          UART_INIT
-  C:0EE1H         LINE#         256
-  C:0EE1H         LINE#         257
-  C:0EE4H         LINE#         258
+  C:0FE8H         LINE#         258
+  C:0FE8H         LINE#         259
+  C:0FEBH         LINE#         260
   -------         ENDPROC       UART_INIT
   -------         PROC          TIMER_INIT
-  C:0EC1H         LINE#         262
-  C:0EC1H         LINE#         263
-  C:0EC4H         LINE#         264
-  C:0EC7H         LINE#         265
-  C:0EC9H         LINE#         266
+  C:0FC8H         LINE#         264
+  C:0FC8H         LINE#         265
+  C:0FCBH         LINE#         266
+  C:0FCEH         LINE#         267
+  C:0FD0H         LINE#         268
   -------         ENDPROC       TIMER_INIT
   -------         PROC          _UART_TX
   D:0007H         SYMBOL        x
-  C:0ECAH         LINE#         269
-  C:0ECAH         LINE#         270
-  C:0ECCH         LINE#         272
-  C:0ECFH         LINE#         274
-  C:0ED1H         LINE#         275
+  C:0FD1H         LINE#         271
+  C:0FD1H         LINE#         272
+  C:0FD3H         LINE#         274
+  C:0FD6H         LINE#         276
+  C:0FD8H         LINE#         277
   -------         ENDPROC       _UART_TX
   -------         PROC          UART_RX
   -------         DO            
   D:0007H         SYMBOL        x
   -------         ENDDO         
-  C:0ED2H         LINE#         278
-  C:0ED2H         LINE#         281
-  C:0ED5H         LINE#         282
-  C:0ED7H         LINE#         283
-  C:0ED9H         LINE#         284
-  C:0ED9H         LINE#         285
+  C:0FD9H         LINE#         280
+  C:0FD9H         LINE#         283
+  C:0FDCH         LINE#         284
+  C:0FDEH         LINE#         285
+  C:0FE0H         LINE#         286
+  C:0FE0H         LINE#         287
   -------         ENDPROC       UART_RX
   -------         PROC          TIMER0_ISR
-  C:0E7BH         LINE#         288
-  C:0E7DH         LINE#         289
-  C:0E7FH         LINE#         290
-  C:0E87H         LINE#         291
-  C:0E8AH         LINE#         292
-  C:0E8DH         LINE#         293
-  C:0E8FH         LINE#         294
-  C:0E91H         LINE#         295
+  C:0F8EH         LINE#         290
+  C:0F90H         LINE#         291
+  C:0F92H         LINE#         292
+  C:0F9AH         LINE#         293
+  C:0F9DH         LINE#         294
+  C:0FA0H         LINE#         295
+  C:0FA2H         LINE#         296
+  C:0FA4H         LINE#         297
   -------         ENDPROC       TIMER0_ISR
   -------         ENDMOD        UART
 
   -------         MODULE        ?C?CLDPTR
-  C:0800H         PUBLIC        ?C?CLDPTR
+  C:0984H         PUBLIC        ?C?CLDPTR
   -------         ENDMOD        ?C?CLDPTR
 
   -------         MODULE        ?C?ULDIV
-  C:0855H         PUBLIC        ?C?ULDIV
+  C:09D9H         PUBLIC        ?C?ULDIV
   -------         ENDMOD        ?C?ULDIV
 
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  11/17/2018  22:52:16  PAGE 8
-
-
   -------         MODULE        ?C?ULCMP
-  C:08E7H         PUBLIC        ?C?ULCMP
+  C:0A6BH         PUBLIC        ?C?ULCMP
   -------         ENDMOD        ?C?ULCMP
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  11/18/2018  13:45:02  PAGE 8
+
+
 
   -------         MODULE        ?C?LSHL
-  C:08F8H         PUBLIC        ?C?LSHL
+  C:0A7CH         PUBLIC        ?C?LSHL
   -------         ENDMOD        ?C?LSHL
 
   -------         MODULE        ?C?LSTXDATA
-  C:090BH         PUBLIC        ?C?LSTXDATA
+  C:0A8FH         PUBLIC        ?C?LSTXDATA
   -------         ENDMOD        ?C?LSTXDATA
 
   -------         MODULE        ?C?LSTKXDATA
-  C:0917H         PUBLIC        ?C?LSTKXDATA
+  C:0A9BH         PUBLIC        ?C?LSTKXDATA
   -------         ENDMOD        ?C?LSTKXDATA
 
-  -------         MODULE        ABS
-  C:0EB5H         PUBLIC        _ABS
-  -------         ENDMOD        ABS
-
 ******************************************************************************
-* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0518H BYTE (63%) *
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 062BH BYTE (77%) *
 ******************************************************************************
 
-Program Size: data=34.1 xdata=108 code=1773
+Program Size: data=34.1 xdata=108 code=2036
 LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)
